@@ -1,6 +1,7 @@
 const path = require('node:path');
 const express = require('express');
 const { session, SQLiteSessionStore, installAppLocals } = require('./src/middleware');
+const { uploadsDir } = require('./src/db');
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -39,6 +40,7 @@ app.use(
 
 installAppLocals(app);
 
+app.use('/uploads', express.static(uploadsDir, { maxAge: isProduction ? '1h' : 0 }));
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: isProduction ? '1h' : 0 }));
 
 app.use('/', require('./src/routes/public'));
@@ -61,6 +63,10 @@ app.use((err, req, res, _next) => {
   res.status(500).render('errors/500', { title: 'Something Went Wrong', active: '' });
 });
 
-app.listen(port, () => {
-  console.log(`CloudPlate Kitchen is running at http://localhost:${port}`);
-});
+if (process.env.VERCEL !== '1') {
+  app.listen(port, () => {
+    console.log(`Cloud Kitchen is running at http://localhost:${port}`);
+  });
+}
+
+module.exports = app;

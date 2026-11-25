@@ -4,8 +4,9 @@ const { DatabaseSync } = require('node:sqlite');
 const { hashPassword } = require('./security');
 
 const rootDir = path.join(__dirname, '..');
-const dataDir = path.join(rootDir, 'data');
-const uploadsDir = path.join(rootDir, 'public', 'uploads');
+const isServerless = process.env.VERCEL === '1';
+const dataDir = isServerless ? path.join('/tmp', 'cloudkitchen-data') : path.join(rootDir, 'data');
+const uploadsDir = isServerless ? path.join('/tmp', 'cloudkitchen-uploads') : path.join(rootDir, 'public', 'uploads');
 
 fs.mkdirSync(dataDir, { recursive: true });
 fs.mkdirSync(uploadsDir, { recursive: true });
