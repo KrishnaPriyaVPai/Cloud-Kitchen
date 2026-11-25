@@ -5,3 +5,4 @@ data/*.db-shm
 public/uploads/*
 !public/uploads/.gitkeep
 .env
+.vercel
