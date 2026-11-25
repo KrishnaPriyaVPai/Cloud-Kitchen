@@ -1,0 +1,144 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <span class="eyebrow">Fresh from our kitchen to your door</span>
+      <h1>Real food.<br><em>Really good.</em></h1>
+      <p class="hero-lead">Welcome to <%= settings.kitchen_name %>. We cook every order from scratch with honest ingredients, bold flavours and the kind of care you can taste. No microwave shortcuts. Ever.</p>
+      <div class="hero-actions">
+        <a href="/menu" class="btn btn-primary">Order now →</a>
+        <a href="/about" class="btn btn-light">Meet the kitchen</a>
+      </div>
+      <div class="hero-proof">
+        <div><strong>4.9★</strong><span>Average rating</span></div>
+        <div><strong>30 min</strong><span>Avg. delivery</span></div>
+        <div><strong>100%</strong><span>Cooked to order</span></div>
+      </div>
+    </div>
+    <div class="hero-card">
+      <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=900&q=80" alt="Fragrant chicken biryani served with raita">
+      <div class="hero-float"><span class="emoji">🔥</span> Today's favourite</div>
+      <div class="hero-card-body">
+        <div>
+          <h4>Hyderabadi Chicken Biryani</h4>
+          <p>Saffron rice · tender chicken · house raita</p>
+        </div>
+        <span class="price-tag">₹349</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="trust-strip">
+  <div class="container trust-grid">
+    <div class="trust-item"><span class="trust-icon">🌿</span><div><strong>Fresh ingredients</strong><span>Bought daily, cooked same day</span></div></div>
+    <div class="trust-item"><span class="trust-icon">🔥</span><div><strong>Cooked to order</strong><span>Never pre-made or reheated</span></div></div>
+    <div class="trust-item"><span class="trust-icon">📦</span><div><strong>Smart packaging</strong><span>Hot, neat and leak-proof</span></div></div>
+    <div class="trust-item"><span class="trust-icon">🚴</span><div><strong>Fast delivery</strong><span>Tracked from kitchen to door</span></div></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container story-grid">
+    <div class="story-img">
+      <img src="/about-kitchen.jpeg" alt="Our chefs preparing fresh food in the kitchen" loading="lazy">
+      <div class="story-note"><strong>100%</strong> cooked after you order.</div>
+    </div>
+    <div>
+      <span class="eyebrow">Get to know us</span>
+      <h2>A kitchen with one obsession:<br>food done right.</h2>
+      <p><%= settings.about_story %></p>
+      <p>We're a delivery-first kitchen built around fresh ingredients, thoughtful cooking and the belief that great food should never be an afterthought. No dining room, no shortcuts — just honest food made with care.</p>
+      <a href="/about" class="btn btn-outline">More about us →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">Something for every craving</span>
+      <h2>Explore by category</h2>
+      <p>From comforting biryanis to light bowls and sweet finishes — there's always something good on the menu.</p>
+    </div>
+    <div class="category-grid">
+      <% categories.forEach(function(cat) { %>
+        <a class="category-tile" href="/menu?category=<%= cat.slug %>">
+          <div class="cat-emoji"><%= cat.emoji || '🍽️' %></div>
+          <strong><%= cat.name %></strong>
+          <span>Explore dishes →</span>
+        </a>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">How it works</span>
+      <h2>Good food, made simple</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step">
+        <h3>Pick your favourites</h3>
+        <p>Browse the menu, add dishes to your cart and tell us where to deliver. It takes less than a minute.</p>
+      </div>
+      <div class="step">
+        <h3>We cook it fresh</h3>
+        <p>Our kitchen starts preparing your order the moment it lands. Every dish is tasted before it is packed.</p>
+      </div>
+      <div class="step">
+        <h3>Track &amp; enjoy</h3>
+        <p>Follow your order from accepted to delivered, then dig in while it's still hot and exactly right.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% if (featuredReviews.length) { %>
+<section class="section section-soft">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">Word of mouth</span>
+      <h2>Loved by hungry people</h2>
+      <p>Real reviews from real customers who ordered from our kitchen.</p>
+    </div>
+    <div class="reviews-carousel" id="reviews-carousel">
+      <button class="carousel-arrow carousel-prev" type="button" data-review-prev aria-label="Previous reviews" aria-controls="reviews-track">‹</button>
+      <div class="reviews-viewport">
+        <div class="quote-grid" id="reviews-track">
+          <% featuredReviews.forEach(function(review) { %>
+            <div class="quote-card">
+              <div class="stars"><%= '★'.repeat(review.rating) %><%= '☆'.repeat(5 - review.rating) %></div>
+              <blockquote>“<%= review.comment %>”</blockquote>
+              <div class="quote-author">
+                <span class="avatar"><%= review.name.charAt(0).toUpperCase() %></span>
+                <div><strong><%= review.name %></strong><span><%= timeAgo(review.created_at) %></span></div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+      <button class="carousel-arrow carousel-next" type="button" data-review-next aria-label="Next reviews" aria-controls="reviews-track">›</button>
+    </div>
+    <div class="carousel-dots" id="reviews-dots" aria-label="Choose review slide"></div>
+  </div>
+</section>
+<% } %>
+
+<section class="section">
+  <div class="container">
+    <div class="cta-band">
+      <div>
+        <span class="eyebrow" style="color:#93b9ff">Ready when you are</span>
+        <h2>Craving something good?</h2>
+        <p>Freshly prepared food is just a few clicks away. Your next favourite meal is waiting.</p>
+      </div>
+      <a href="/menu" class="btn btn-primary">Order now →</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

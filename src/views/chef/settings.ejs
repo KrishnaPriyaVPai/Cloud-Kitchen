@@ -1,0 +1,64 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h1>Kitchen settings</h1>
+        <p>Update the details shown across the website and manage your admin password.</p>
+      </div>
+    </div>
+
+    <div class="grid-2-even">
+      <div class="panel">
+        <div class="panel-head"><h2>Public details</h2></div>
+        <div class="panel-body">
+          <form action="/chef/settings" method="post">
+            <div class="form-grid">
+              <label>Kitchen name<input name="kitchen_name" value="<%= settings.kitchen_name %>" required></label>
+              <label>Short name / logo text<input name="short_name" value="<%= settings.short_name %>" required></label>
+              <label class="full">Tagline<input name="tagline" value="<%= settings.tagline %>"></label>
+              <label>Phone<input name="phone" value="<%= settings.phone %>"></label>
+              <label>Email<input name="email" type="email" value="<%= settings.email %>"></label>
+              <label class="full">Address<textarea name="address" rows="2"><%= settings.address %></textarea></label>
+              <label class="full">Opening hours<input name="opening_hours" value="<%= settings.opening_hours %>"></label>
+              <label>Chef name<input name="chef_name" value="<%= settings.chef_name %>"></label>
+              <label>Instagram URL<input name="instagram" value="<%= settings.instagram %>"></label>
+              <label class="full">Map search query<input name="map_query" value="<%= settings.map_query %>"></label>
+              <label class="full">About story<textarea name="about_story" rows="4"><%= settings.about_story %></textarea></label>
+              <label class="full">Chef bio<textarea name="chef_bio" rows="4"><%= settings.chef_bio %></textarea></label>
+            </div>
+            <button class="btn btn-primary" type="submit" style="margin-top:1rem">Save details →</button>
+          </form>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <div class="panel-head"><h2>Change password</h2></div>
+          <div class="panel-body">
+            <form action="/chef/password" method="post">
+              <label>Current password<input name="current_password" type="password" required autocomplete="current-password"></label>
+              <label style="margin-top:1rem">New password<input name="new_password" type="password" minlength="8" required autocomplete="new-password"></label>
+              <p class="form-hint">At least 8 characters. Use something you don't use elsewhere.</p>
+              <button class="btn btn-dark" type="submit" style="margin-top:.8rem">Update password</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Signed in as</h2></div>
+          <div class="panel-body">
+            <div class="order-summary">
+              <div class="summary-line"><span>Name</span><strong><%= user.name %></strong></div>
+              <div class="summary-line"><span>Email</span><strong><%= user.email %></strong></div>
+              <div class="summary-line"><span>Role</span><strong>Chef / Admin</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

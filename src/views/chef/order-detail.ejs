@@ -1,0 +1,134 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h1><%= order.order_number %></h1>
+        <p>Placed <%= timeAgo(order.created_at) %> · <%= formatDate(order.created_at) %></p>
+      </div>
+      <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+        <span class="badge <%= statusMeta(order.status).cls %>"><%= statusMeta(order.status).icon %> <%= statusMeta(order.status).label %></span>
+        <a href="/chef/orders" class="btn btn-sm btn-outline">← All orders</a>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="panel">
+          <div class="panel-head"><h2>Order items</h2><span class="small muted"><%= items.length %> line items</span></div>
+          <div class="panel-body">
+            <% items.forEach(function(item) { %>
+              <div class="order-item-line">
+                <img class="thumb" src="<%= item.image_url %>" alt="">
+                <div style="flex:1">
+                  <div class="item-name"><%= item.name %></div>
+                  <div class="item-sub"><%= money(item.price) %> each</div>
+                </div>
+                <span class="qty-pill">× <%= item.quantity %></span>
+                <strong class="small"><%= money(item.price * item.quantity) %></strong>
+              </div>
+            <% }); %>
+            <div class="summary-line total" style="margin-top:.8rem"><span>Order total</span><span><%= money(order.total) %></span></div>
+            <div class="summary-line small"><span>Payment method</span><strong><%= order.payment_method === 'upi' ? 'UPI on delivery' : 'Cash on delivery' %></strong></div>
+            <% if (order.notes) { %>
+              <div class="flash flash-success" style="margin-top:1rem"><span><strong>Kitchen note:</strong> <%= order.notes %></span></div>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>Customer &amp; delivery</h3></div>
+          <div class="panel-body">
+            <div class="order-summary">
+              <div class="summary-line"><span>Name</span><strong><%= order.customer_name %></strong></div>
+              <div class="summary-line"><span>Phone</span><strong><a href="tel:<%= order.customer_phone %>"><%= order.customer_phone %></a></strong></div>
+              <div class="summary-line"><span>Address</span><strong style="text-align:right;max-width:65%"><%= order.address %></strong></div>
+              <div class="summary-line"><span>Delivery partner</span><strong><%= order.delivery_name || 'Not assigned yet' %></strong></div>
+              <% if (order.delivery_phone) { %><div class="summary-line"><span>Rider contact</span><strong><%= order.delivery_phone %></strong></div><% } %>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>Status history</h3></div>
+          <div class="panel-body">
+            <% if (!history.length) { %><p class="muted small">No history yet.</p><% } %>
+            <ul class="timeline">
+              <% history.forEach(function(h, index) { %>
+                <li class="<%= index === 0 ? 'current' : '' %>">
+                  <strong><%= statusMeta(h.status).label %> · <span class="muted small"><%= h.actor %></span></strong>
+                  <span><%= h.note || '' %> — <%= timeAgo(h.created_at) %></span>
+                </li>
+              <% }); %>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <div class="panel-head"><h2>Manage order</h2></div>
+          <div class="panel-body action-stack">
+            <% if (order.status === 'pending') { %>
+              <div class="action-box">
+                <h4>New order</h4>
+                <p class="small muted">Review the items and accept if you can prepare it, or reject with a reason.</p>
+                <form action="/chef/orders/<%= order.id %>/accept" method="post"><button class="btn btn-primary btn-block" type="submit">✓ Accept order</button></form>
+                <form action="/chef/orders/<%= order.id %>/reject" method="post" style="margin-top:.6rem">
+                  <input name="reason" placeholder="Reason for rejection (optional)" class="small">
+                  <button class="btn btn-danger btn-block" type="submit" style="margin-top:.5rem">✕ Reject order</button>
+                </form>
+              </div>
+            <% } %>
+
+            <% if (order.status === 'accepted' || order.status === 'assigned') { %>
+              <div class="action-box">
+                <h4>Assign delivery partner</h4>
+                <% if (riders.length) { %>
+                  <form action="/chef/orders/<%= order.id %>/assign" method="post">
+                    <select name="delivery_boy_id" required>
+                      <option value="">Choose a rider…</option>
+                      <% riders.forEach(function(rider) { %>
+                        <option value="<%= rider.id %>" <%= order.delivery_boy_id === rider.id ? 'selected' : '' %>><%= rider.name %> <%= rider.is_active ? '' : '(inactive)' %> · <%= rider.phone || 'no phone' %></option>
+                      <% }); %>
+                    </select>
+                    <button class="btn btn-primary btn-block" type="submit" style="margin-top:.6rem"><%= order.delivery_boy_id ? 'Reassign rider' : 'Assign and notify rider' %></button>
+                  </form>
+                  <% if (order.status === 'assigned') { %>
+                    <form action="/chef/orders/<%= order.id %>/unassign" method="post"><button class="btn btn-ghost btn-block" type="submit" style="margin-top:.4rem">Remove assignment</button></form>
+                  <% } %>
+                <% } else { %>
+                  <p class="small muted">No delivery partners yet. <a class="link-arrow" href="/chef/staff">Add one →</a></p>
+                <% } %>
+              </div>
+            <% } %>
+
+            <% if (['assigned','picked_up','on_the_way'].includes(order.status)) { %>
+              <div class="action-box">
+                <h4>Update status manually</h4>
+                <form action="/chef/orders/<%= order.id %>/status" method="post">
+                  <select name="status" required>
+                    <% ['assigned','picked_up','on_the_way','delivered'].forEach(function(s) { %>
+                      <option value="<%= s %>" <%= order.status === s ? 'selected' : '' %>><%= statusMeta(s).label %></option>
+                    <% }); %>
+                  </select>
+                  <input name="note" placeholder="Optional note" style="margin-top:.6rem">
+                  <button class="btn btn-dark btn-block" type="submit" style="margin-top:.6rem">Update status</button>
+                </form>
+              </div>
+            <% } %>
+
+            <% if (['delivered','rejected','cancelled'].includes(order.status)) { %>
+              <div class="flash flash-success"><span>This order is <%= order.status %>. No further action needed.</span></div>
+            <% } %>
+
+            <a class="btn btn-outline btn-block" href="/track?order=<%= encodeURIComponent(order.order_number) %>&phone=<%= encodeURIComponent(order.customer_phone) %>" target="_blank">View customer tracking page ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

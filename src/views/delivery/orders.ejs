@@ -1,0 +1,51 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h1>My deliveries</h1>
+        <p>Every order assigned to you, in one place.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="filter-tabs">
+          <a href="/delivery/orders" class="<%= !status ? 'active' : '' %>">All</a>
+          <a href="/delivery/orders?status=assigned" class="<%= status === 'assigned' ? 'active' : '' %>">To pick up</a>
+          <a href="/delivery/orders?status=picked_up" class="<%= status === 'picked_up' ? 'active' : '' %>">Picked up</a>
+          <a href="/delivery/orders?status=on_the_way" class="<%= status === 'on_the_way' ? 'active' : '' %>">On the way</a>
+          <a href="/delivery/orders?status=delivered" class="<%= status === 'delivered' ? 'active' : '' %>">Delivered</a>
+        </div>
+        <span class="small muted"><%= orders.length %> orders</span>
+      </div>
+      <div class="panel-body flush">
+        <% if (!orders.length) { %>
+          <div class="empty-state"><div class="empty-icon">📦</div><h3>No orders here</h3><p>Orders assigned to you will appear in this list.</p></div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Order</th><th>Customer</th><th>Address</th><th>Items</th><th>Total</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                <% orders.forEach(function(order) { %>
+                  <tr>
+                    <td><div class="cell-title"><%= order.order_number %></div><div class="cell-sub"><%= timeAgo(order.created_at) %></div></td>
+                    <td><div class="cell-title"><%= order.customer_name %></div><div class="cell-sub"><%= order.customer_phone %></div></td>
+                    <td class="cell-sub" style="max-width:260px"><%= order.address %></td>
+                    <td class="cell-sub"><%= order.item_count || '—' %></td>
+                    <td><strong><%= money(order.total) %></strong></td>
+                    <td><span class="badge <%= statusMeta(order.status).cls %>"><%= statusMeta(order.status).label %></span></td>
+                    <td><a class="action-btn primary" href="/delivery/orders/<%= order.id %>">Open →</a></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,123 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h1>Hey <%= user.name.split(' ')[0] %>, ready to ride?</h1>
+        <p>Here are the orders assigned to you right now.</p>
+      </div>
+      <a href="/delivery/orders" class="btn btn-sm btn-primary">View all deliveries →</a>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card accent">
+        <div class="stat-label">To pick up</div>
+        <div class="stat-value"><%= stats.assigned %></div>
+        <div class="stat-sub">Waiting at the kitchen</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Picked up</div>
+        <div class="stat-value"><%= stats.picked %></div>
+        <div class="stat-sub">Pack in hand</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">On the way</div>
+        <div class="stat-value"><%= stats.transit %></div>
+        <div class="stat-sub">Heading to customer</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Delivered today</div>
+        <div class="stat-value"><%= stats.deliveredToday %></div>
+        <div class="stat-sub"><%= money(stats.earnings) %> order value</div>
+      </div>
+    </div>
+
+    <%- include('../partials/demo-account', { role: 'delivery' }) %>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Available orders</h2><span class="small muted"><%= availableOrders.length %> ready for pickup</span></div>
+      <div class="panel-body flush">
+        <% if (!availableOrders.length) { %>
+          <div class="empty-state"><div class="empty-icon">📦</div><h3>No available orders</h3><p>When the chef accepts an order, you can claim it here.</p></div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Order</th><th>Customer</th><th>Delivery address</th><th>Total</th><th>Placed</th><th></th></tr></thead>
+              <tbody>
+                <% availableOrders.forEach(function(order) { %>
+                  <tr>
+                    <td><span class="cell-title"><%= order.order_number %></span></td>
+                    <td><div class="cell-title"><%= order.customer_name %></div><div class="cell-sub"><%= order.customer_phone %></div></td>
+                    <td class="cell-sub" style="max-width:280px"><%= order.address %></td>
+                    <td><strong><%= money(order.total) %></strong></td>
+                    <td class="cell-sub"><%= timeAgo(order.created_at) %></td>
+                    <td>
+                      <form action="/delivery/orders/<%= order.id %>/accept" method="post" class="inline-form">
+                        <button class="action-btn primary" type="submit">Accept order</button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Active deliveries</h2><span class="small muted"><%= activeOrders.length %> in progress</span></div>
+      <div class="panel-body flush">
+        <% if (!activeOrders.length) { %>
+          <div class="empty-state"><div class="empty-icon">🚴</div><h3>Nothing assigned right now</h3><p>When the chef assigns you an order, it will show up here.</p></div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Order</th><th>Customer</th><th>Delivery address</th><th>Total</th><th>Status</th><th>Placed</th><th></th></tr></thead>
+              <tbody>
+                <% activeOrders.forEach(function(order) { %>
+                  <tr>
+                    <td><span class="cell-title"><%= order.order_number %></span></td>
+                    <td><div class="cell-title"><%= order.customer_name %></div><div class="cell-sub"><%= order.customer_phone %></div></td>
+                    <td class="cell-sub" style="max-width:280px"><%= order.address %></td>
+                    <td><strong><%= money(order.total) %></strong></td>
+                    <td><span class="badge <%= statusMeta(order.status).cls %>"><%= statusMeta(order.status).label %></span></td>
+                    <td class="cell-sub"><%= timeAgo(order.created_at) %></td>
+                    <td><a class="action-btn primary" href="/delivery/orders/<%= order.id %>">Open →</a></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <% if (recentDelivered.length) { %>
+      <div class="panel">
+        <div class="panel-head"><h2>Recently delivered</h2></div>
+        <div class="panel-body flush">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Delivered</th><th></th></tr></thead>
+              <tbody>
+                <% recentDelivered.forEach(function(order) { %>
+                  <tr>
+                    <td class="cell-title"><%= order.order_number %></td>
+                    <td class="cell-sub"><%= order.customer_name %></td>
+                    <td><strong><%= money(order.total) %></strong></td>
+                    <td class="cell-sub"><%= timeAgo(order.delivered_at || order.updated_at) %></td>
+                    <td><a class="action-btn" href="/delivery/orders/<%= order.id %>">View</a></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

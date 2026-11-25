@@ -1,0 +1,111 @@
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a> / About us</div>
+    <span class="eyebrow">Our story</span>
+    <h1>A kitchen with one obsession:<br>food done right.</h1>
+    <p>We're a delivery-first kitchen built around fresh ingredients, thoughtful cooking and the belief that great food should never be an afterthought.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container story-grid">
+    <div class="story-img">
+      <img src="/about-kitchen.jpeg" alt="Our chefs preparing fresh food in the kitchen">
+      <div class="story-note"><strong>100%</strong> of our dishes are cooked after you order.</div>
+    </div>
+    <div>
+      <span class="eyebrow">Why we exist</span>
+      <h2>No dining room.<br>All kitchen.</h2>
+      <p><%= settings.about_story %></p>
+      <p>Because we don't have a front-of-house to worry about, every bit of our energy goes into what matters — sourcing well, cooking carefully and packing food so it arrives in the condition it was meant to be eaten.</p>
+      <a href="/menu" class="btn btn-primary">See what we're cooking →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">What we stand for</span>
+      <h2>Quality you can taste</h2>
+      <p>These aren't buzzwords for us. They're the rules we run our kitchen by, every single day.</p>
+    </div>
+    <div class="value-grid">
+      <div class="value-card">
+        <div class="value-icon">🌿</div>
+        <h3>Honest ingredients</h3>
+        <p>Real spices, fresh produce and good oil. If we wouldn't serve it at home, it never enters your order.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">👨‍🍳</div>
+        <h3>Crafted by cooks</h3>
+        <p>Our team tastes, seasons and finishes every batch by hand. No factory shortcuts, no mystery sauces.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🔥</div>
+        <h3>Hot when it leaves</h3>
+        <p>We pack to order and hand off fast, so your food reaches you warm, aromatic and ready to eat.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🧼</div>
+        <h3>Clean kitchen</h3>
+        <p>Sanitised stations, colour-coded prep and daily deep cleans. Cleanliness is part of the recipe.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">⚖️</div>
+        <h3>Fair portions</h3>
+        <p>Generous, honest portions at prices that make sense. You should leave full and happy, not short-changed.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">💬</div>
+        <h3>We listen</h3>
+        <p>Every review and note goes straight to the kitchen. Your feedback genuinely shapes what we cook next.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="chef-card">
+      <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=800&q=80" alt="<%= settings.chef_name %> in the kitchen">
+      <div>
+        <span class="eyebrow" style="color:#93b9ff">The person behind the food</span>
+        <h2>Meet <%= settings.chef_name %></h2>
+        <p><%= settings.chef_bio %></p>
+        <p>His cooking style is simple: respect the ingredient, build flavour in layers and never overcomplicate a good dish. That approach is the heartbeat of everything that leaves our kitchen.</p>
+        <div class="chef-sign">— <%= settings.chef_name %></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">More than just dinner</span>
+      <h2>What we do</h2>
+    </div>
+    <div class="value-grid">
+      <div class="value-card">
+        <div class="value-icon">🍱</div>
+        <h3>À la carte ordering</h3>
+        <p>Order exactly what you want, whenever you want it. Mix and match across the whole menu.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🎉</div>
+        <h3>Small gatherings</h3>
+        <p>Team lunches, birthday evenings or movie nights — we can put together a spread that travels well.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🌱</div>
+        <h3>Vegetarian friendly</h3>
+        <p>Plenty of proper veg dishes, cooked with the same attention as everything else on our menu.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

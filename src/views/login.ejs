@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+<%
+  const _portal = typeof portal !== 'undefined' ? portal : 'chef';
+  const _mode = typeof mode !== 'undefined' ? mode : 'login';
+  const _form = typeof form !== 'undefined' ? form : {};
+  const _next = typeof next !== 'undefined' ? next : '';
+  const _action = typeof action !== 'undefined' ? action : `/${_portal}/login`;
+  const _eyebrow = typeof eyebrow !== 'undefined' ? eyebrow : 'Staff access';
+  const _heading = typeof heading !== 'undefined' ? heading : 'Welcome back';
+  const _description = typeof description !== 'undefined' ? description : 'Sign in to continue.';
+  const _allowRegister = typeof allowRegister !== 'undefined' ? allowRegister : _portal === 'delivery';
+  const _demoLabel = typeof demoLabel !== 'undefined' ? demoLabel : 'Demo account';
+  const _demoEmail = typeof demoEmail !== 'undefined' ? demoEmail : '';
+  const _demoPassword = typeof demoPassword !== 'undefined' ? demoPassword : '';
+  const _other = typeof other !== 'undefined' ? other : { label: 'Other', href: '/login' };
+  const _forgot = `/forgot-password?portal=${encodeURIComponent(_portal)}`;
+%>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <% if (_allowRegister) { %>
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab <%= _mode !== 'register' ? 'active' : '' %>" data-auth-tab="login">Sign in</button>
+        <button type="button" class="auth-tab <%= _mode === 'register' ? 'active' : '' %>" data-auth-tab="register">Register</button>
+      </div>
+    <% } %>
+
+    <div data-auth-panel="login" <%= _mode === 'register' ? 'hidden' : '' %>>
+      <span class="eyebrow"><%= _eyebrow %></span>
+      <h1><%= _heading %></h1>
+      <p class="muted"><%= _description %></p>
+      <form action="<%= _action %>" method="post">
+        <% if (_next) { %><input type="hidden" name="next" value="<%= _next %>"><% } %>
+        <label>Email address<input name="email" type="email" required autocomplete="username" placeholder="you@example.com" value="<%= _form.loginEmail || '' %>"></label>
+        <label style="margin-top:1rem">Password<input name="password" type="password" required autocomplete="current-password" placeholder="Your password"></label>
+        <div style="text-align:right;margin:.5rem 0 0"><a class="link-arrow small" href="<%= _forgot %>">Forgot password?</a></div>
+        <button class="btn btn-primary btn-block" type="submit" style="margin-top:1rem">Sign in →</button>
+      </form>
+      <% if (_allowRegister) { %>
+        <p class="small muted" style="text-align:center;margin:1.2rem 0 0">
+          New here? <button type="button" class="link-arrow auth-link" data-auth-tab="register">Create an account</button>
+        </p>
+      <% } %>
+    </div>
+
+    <% if (_allowRegister) { %>
+      <div data-auth-panel="register" <%= _mode !== 'register' ? 'hidden' : '' %>>
+        <span class="eyebrow">Delivery partner</span>
+        <h1>Create account</h1>
+        <p class="muted">Register as a delivery partner to accept and track orders.</p>
+        <form action="/register" method="post">
+          <label>Full name<input name="name" required autocomplete="name" placeholder="Your name" value="<%= _form.regName || '' %>"></label>
+          <label style="margin-top:1rem">Email address<input name="email" type="email" required autocomplete="username" placeholder="you@example.com" value="<%= _form.regEmail || '' %>"></label>
+          <label style="margin-top:1rem">Phone<input name="phone" inputmode="tel" autocomplete="tel" placeholder="10-digit mobile" value="<%= _form.regPhone || '' %>"></label>
+          <label style="margin-top:1rem">Vehicle<input name="vehicle" placeholder="Bike / scooter and registration" value="<%= _form.regVehicle || '' %>"></label>
+          <label style="margin-top:1rem">Password<input name="password" type="password" minlength="8" required autocomplete="new-password" placeholder="At least 8 characters"></label>
+          <label style="margin-top:1rem">Confirm password<input name="confirm_password" type="password" minlength="8" required autocomplete="new-password" placeholder="Re-enter password"></label>
+          <button class="btn btn-primary btn-block" type="submit" style="margin-top:1.2rem">Register →</button>
+        </form>
+        <p class="small muted" style="text-align:center;margin:1.2rem 0 0">
+          <button type="button" class="link-arrow auth-link" data-auth-tab="login">Already registered? Sign in</button>
+        </p>
+      </div>
+    <% } %>
+
+    <div class="demo-box" style="margin-top:1.2rem">
+      <h4>Demo account</h4>
+      <p style="margin:0"><strong><%= _demoLabel %></strong><br><code><%= _demoEmail %></code> · <code><%= _demoPassword %></code></p>
+    </div>
+
+    <p class="small muted" style="text-align:center;margin:.8rem 0 0">
+      <a class="link-arrow" href="<%= _other.href %>"><%= _other.label %> sign in →</a>
+    </p>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

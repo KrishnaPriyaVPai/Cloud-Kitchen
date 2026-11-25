@@ -1,0 +1,24 @@
+<%- include('../partials/header') %>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <span class="eyebrow">Delivery partner</span>
+    <h1>Create your account</h1>
+    <p class="muted">Register to receive delivery assignments, track orders, and update delivery status.</p>
+    <form action="/delivery/register" method="post">
+      <label>Full name<input name="name" required autocomplete="name" placeholder="Your name"></label>
+      <label style="margin-top:1rem">Email address<input name="email" type="email" required autocomplete="username" placeholder="you@example.com"></label>
+      <label style="margin-top:1rem">Phone<input name="phone" inputmode="tel" autocomplete="tel" placeholder="10-digit mobile"></label>
+      <label style="margin-top:1rem">Vehicle<input name="vehicle" placeholder="Bike / scooter and registration"></label>
+      <label style="margin-top:1rem">Password<input name="password" type="password" minlength="8" required autocomplete="new-password" placeholder="At least 8 characters"></label>
+      <label style="margin-top:1rem">Confirm password<input name="confirm_password" type="password" minlength="8" required autocomplete="new-password" placeholder="Re-enter password"></label>
+      <button class="btn btn-primary btn-block" type="submit" style="margin-top:1.2rem">Create account →</button>
+    </form>
+
+    <p class="small muted" style="text-align:center;margin:1.2rem 0 0">
+      Already have an account? <a class="link-arrow" href="/delivery/login">Sign in →</a>
+    </p>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

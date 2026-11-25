@@ -1,0 +1,74 @@
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a> / Menu</div>
+    <span class="eyebrow">Freshly prepared, every time</span>
+    <h1>Our menu</h1>
+    <p>Pick what you're craving. Everything is cooked to order by our kitchen team and packed hot for the journey to you.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="filter-bar">
+      <form action="/menu" method="get">
+        <input type="search" name="q" value="<%= filters.q %>" placeholder="Search dishes or ingredients…" aria-label="Search menu">
+        <label class="switch-label"><input type="checkbox" name="veg" value="1" <%= filters.veg ? 'checked' : '' %>> Veg only</label>
+        <label class="switch-label"><input type="checkbox" name="nonveg" value="1" <%= filters.nonveg ? 'checked' : '' %>> Non-veg only</label>
+        <button class="btn btn-sm btn-dark" type="submit">Apply filters</button>
+        <% if (filters.category || filters.veg || filters.nonveg || filters.q) { %>
+          <a href="/menu" class="btn btn-sm btn-ghost">Clear all</a>
+        <% } %>
+        <span class="result-count"><%= items.length %> dish<%= items.length === 1 ? '' : 'es' %> found</span>
+      </form>
+      <div class="chips" style="width:100%;margin-top:.4rem">
+        <% const base = []; %>
+        <% if (filters.veg) base.push('veg=1'); %>
+        <% if (filters.nonveg) base.push('nonveg=1'); %>
+        <% if (filters.q) base.push('q=' + encodeURIComponent(filters.q)); %>
+        <a class="chip <%= !filters.category ? 'active' : '' %>" href="/menu<%= base.length ? '?' + base.join('&') : '' %>">🍽️ All dishes</a>
+        <% categories.forEach(function(cat) { %>
+          <% const params = ['category=' + encodeURIComponent(cat.slug)].concat(base); %>
+          <a class="chip <%= filters.category === cat.slug ? 'active' : '' %>" href="/menu?<%= params.join('&') %>"><%= cat.emoji || '' %> <%= cat.name %></a>
+        <% }); %>
+      </div>
+    </div>
+
+    <% if (!items.length) { %>
+      <div class="panel">
+        <div class="empty-state">
+          <div class="empty-icon">🍽️</div>
+          <h3>No dishes matched your filters</h3>
+          <p>Try a different search or clear the filters to see everything on the menu.</p>
+          <a href="/menu" class="btn btn-sm btn-outline">Show all dishes</a>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="dish-grid">
+        <% items.forEach(function(item) { %>
+          <article class="dish-card">
+            <div class="dish-media">
+              <img src="<%= item.image_url %>" alt="<%= item.name %>" loading="lazy">
+              <div class="dish-badges">
+                <span class="tag <%= item.is_veg ? 'tag-veg' : 'tag-nonveg' %>"><%= item.is_veg ? '🟢 Veg' : '🔴 Non-veg' %></span>
+                <% if (item.is_popular) { %><span class="tag tag-pop">★ Popular</span><% } %>
+              </div>
+            </div>
+            <div class="dish-body">
+              <span class="dish-cat"><%= item.category_emoji || '' %> <%= item.category_name %> · <%= item.prep_minutes %> min</span>
+              <h3><%= item.name %></h3>
+              <p><%= item.description %></p>
+              <div class="dish-foot">
+                <span class="dish-price"><%= money(item.price) %></span>
+                <button class="add-btn" type="button" data-add data-id="<%= item.id %>" data-name="<%= item.name %>" data-price="<%= item.price %>" data-image="<%= item.image_url %>">+ Add</button>
+              </div>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

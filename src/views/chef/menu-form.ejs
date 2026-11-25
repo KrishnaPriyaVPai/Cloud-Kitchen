@@ -1,0 +1,67 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container" style="max-width:860px">
+    <div class="dash-head">
+      <div>
+        <h1><%= item ? 'Edit dish' : 'Add a new dish' %></h1>
+        <p><%= item ? 'Update the details below. Changes appear on the customer menu immediately.' : 'Fill in the details to put a new dish on the menu.' %></p>
+      </div>
+      <a href="/chef/menu" class="btn btn-sm btn-outline">← Back to menu</a>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <form action="<%= action %>" method="post" enctype="multipart/form-data">
+          <div class="form-grid">
+            <label class="full">Dish name<input name="name" required value="<%= item ? item.name : '' %>" placeholder="e.g. Hyderabadi Chicken Biryani"></label>
+            <label class="full">Description<textarea name="description" rows="3" required placeholder="What makes this dish good? Mention key ingredients."><%= item ? item.description : '' %></textarea></label>
+            <label>Category
+              <select name="category_id" required>
+                <% categories.forEach(function(cat) { %>
+                  <option value="<%= cat.id %>" <%= item && item.category_id === cat.id ? 'selected' : '' %>><%= cat.emoji || '' %> <%= cat.name %></option>
+                <% }); %>
+              </select>
+            </label>
+            <label>Price (₹)<input name="price" type="number" min="0" step="1" required value="<%= item ? item.price : '' %>" placeholder="e.g. 349"></label>
+            <label>Preparation time (minutes)<input name="prep_minutes" type="number" min="1" max="240" required value="<%= item ? item.prep_minutes : 20 %>"></label>
+            <label>Spice level
+              <select name="spice_level">
+                <option value="0" <%= item && item.spice_level === 0 ? 'selected' : '' %>🌿 Mild / none</option>
+                <option value="1" <%= item && item.spice_level === 1 ? 'selected' : '' %>🌶️ Low</option>
+                <option value="2" <%= item && item.spice_level === 2 ? 'selected' : '' %>🌶️🌶️ Medium</option>
+                <option value="3" <%= item && item.spice_level === 3 ? 'selected' : '' %>🌶️🌶️🌶️ Hot</option>
+              </select>
+            </label>
+            <label>Display order<input name="sort_order" type="number" value="<%= item ? item.sort_order : 0 %>"></label>
+            <label class="full">Image URL
+              <input name="image_url" value="<%= item && !item.image_url.startsWith('/uploads/') ? item.image_url : '' %>" placeholder="https://… (leave blank if uploading below)">
+              <span class="form-hint">Use a direct image link, or upload a file instead. Uploaded files take priority.</span>
+            </label>
+            <label class="full">Upload image
+              <input name="image" type="file" accept="image/*">
+              <span class="form-hint">JPG, PNG, WEBP, GIF or AVIF · max 5 MB.</span>
+            </label>
+            <% if (item && item.image_url) { %>
+              <div class="full" style="margin:.4rem 0 1rem">
+                <span class="form-hint" style="display:block;margin-bottom:.4rem">Current image:</span>
+                <img src="<%= item.image_url %>" alt="Current dish image" style="width:180px;height:120px;object-fit:cover;border-radius:12px;border:1px solid var(--line)">
+              </div>
+            <% } %>
+            <div class="full" style="display:flex;gap:1.4rem;flex-wrap:wrap;padding:.4rem 0 1rem">
+              <label class="switch-label"><input type="checkbox" name="is_veg" value="1" <%= !item || item.is_veg ? 'checked' : '' %>> Vegetarian</label>
+              <label class="switch-label"><input type="checkbox" name="is_popular" value="1" <%= item && item.is_popular ? 'checked' : '' %>> Mark as popular</label>
+              <label class="switch-label"><input type="checkbox" name="is_available" value="1" <%= !item || item.is_available ? 'checked' : '' %>> Available to order</label>
+            </div>
+          </div>
+          <div style="display:flex;gap:.7rem;flex-wrap:wrap">
+            <button class="btn btn-primary" type="submit"><%= item ? 'Save changes' : 'Add to menu' %> →</button>
+            <a href="/chef/menu" class="btn btn-ghost">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

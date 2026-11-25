@@ -1,0 +1,103 @@
+  <div class="cart-overlay" id="cart-overlay" hidden></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-hidden="true" aria-label="Shopping cart">
+    <div class="cart-head">
+      <div>
+        <span class="eyebrow">Your order</span>
+        <h2>Shopping cart</h2>
+      </div>
+      <button type="button" class="icon-btn" id="cart-close" aria-label="Close cart">×</button>
+    </div>
+    <div class="cart-body" id="cart-items"></div>
+    <div class="cart-bottom">
+      <div class="cart-totals">
+        <div><span>Item total</span><strong id="cart-subtotal">₹0</strong></div>
+        <div><span>Delivery</span><strong id="cart-delivery">₹0</strong></div>
+        <div class="grand"><span>To pay</span><strong id="cart-total">₹0</strong></div>
+      </div>
+      <form id="checkout-form" class="checkout-form">
+        <div class="form-row">
+          <label>Your name<input name="name" required placeholder="e.g. Ananya Rao" autocomplete="name"></label>
+          <label>Phone<input name="phone" required placeholder="10-digit mobile" inputmode="tel" autocomplete="tel"></label>
+        </div>
+        <label>Email (optional)<input name="email" type="email" placeholder="you@example.com" autocomplete="email"></label>
+        <label>Delivery address<textarea name="address" required rows="2" placeholder="Flat, building, street, area" autocomplete="street-address"></textarea></label>
+        <label>Notes for the kitchen (optional)<input name="notes" placeholder="e.g. less spicy, no onion"></label>
+        <label class="select-label">Payment on delivery
+          <select name="payment_method">
+            <option value="cod">Cash on delivery</option>
+            <option value="upi">UPI on delivery</option>
+          </select>
+        </label>
+        <p class="form-error" id="checkout-error" hidden></p>
+        <button class="btn btn-primary btn-block" type="submit" id="place-order-btn">Place order</button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="modal" id="success-modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="success-title">
+      <div class="success-icon">✓</div>
+      <h2 id="success-title">Order placed!</h2>
+      <p>Your food is being prepared fresh. We'll keep you posted.</p>
+      <div class="order-pill-wrap">
+        <div class="order-pill" id="success-order">CK-...</div>
+        <button class="btn btn-sm btn-outline" type="button" id="copy-order-btn" aria-label="Copy tracking ID">Copy</button>
+      </div>
+      <p class="muted small">Estimated delivery: <strong id="success-eta">35 min</strong></p>
+      <div class="modal-actions">
+        <a class="btn btn-primary" id="success-track" href="#">Track order</a>
+        <button class="btn btn-ghost" type="button" id="success-close">Keep browsing</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand brand-light" href="/">
+          <img src="/cloudkitchen-icon.png" alt="" class="brand-logo" aria-hidden="true">
+          <span class="brand-text"><strong><%= settings.short_name %></strong></span>
+        </a>
+        <p><%= settings.tagline %> Made with care in our kitchen, packed hot and sent straight to your doorstep.</p>
+        <div class="socials" aria-label="Social links">
+          <a href="<%= settings.instagram %>" target="_blank" rel="noopener" aria-label="Instagram">ig</a>
+          <a href="mailto:<%= settings.email %>" aria-label="Email">✉</a>
+          <a href="tel:<%= settings.phone %>" aria-label="Phone">☎</a>
+        </div>
+      </div>
+      <div>
+        <h3>Explore</h3>
+        <nav aria-label="Footer navigation">
+          <ul class="footer-links">
+            <li><a href="/menu">Full menu</a></li>
+            <li><a href="/about">Our story</a></li>
+            <li><a href="/contact">Contact us</a></li>
+            <li><a href="/track">Track an order</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div>
+        <h3>Find us</h3>
+        <ul class="footer-contact" aria-label="Kitchen contact details">
+          <li><span>📍</span><%= settings.address %></li>
+          <li><span>📞</span><a href="tel:<%= settings.phone %>"><%= settings.phone %></a></li>
+          <li><span>✉️</span><a href="mailto:<%= settings.email %>"><%= settings.email %></a></li>
+          <li><span>🕒</span><%= settings.opening_hours %></li>
+        </ul>
+      </div>
+      <div class="footer-cta">
+        <h3>Hungry now?</h3>
+        <p>Skip the queue. Order fresh food in under a minute.</p>
+        <a class="btn btn-primary" href="/menu">Order now →</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© <%= currentYear %> <%= settings.kitchen_name %>. All rights reserved.</span>
+      <span>Made fresh, delivered with care.</span>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script src="/js/app.js" defer></script>
+</body>
+</html>

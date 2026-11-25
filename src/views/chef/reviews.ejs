@@ -1,0 +1,50 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h1>Review moderation</h1>
+        <p>Approve customer feedback for the website or hide anything that shouldn't be shown.</p>
+      </div>
+      <span class="small muted"><%= reviews.filter(function(r){ return r.is_approved; }).length %> live · <%= reviews.filter(function(r){ return !r.is_approved; }).length %> hidden</span>
+    </div>
+
+    <% if (!reviews.length) { %>
+      <div class="panel"><div class="empty-state"><div class="empty-icon">💬</div><h3>No reviews yet</h3><p>Customer reviews will appear here.</p></div></div>
+    <% } else { %>
+      <div class="panel">
+        <div class="panel-body flush">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Customer</th><th>Rating</th><th>Review</th><th>Date</th><th>Visibility</th><th>Actions</th></tr></thead>
+              <tbody>
+                <% reviews.forEach(function(review) { %>
+                  <tr>
+                    <td><div class="cell-title"><%= review.name %></div><div class="cell-sub"><%= review.title || '' %></div></td>
+                    <td><span class="stars"><%= '★'.repeat(review.rating) %><%= '☆'.repeat(5 - review.rating) %></span></td>
+                    <td style="max-width:420px"><span class="cell-sub"><%= review.comment %></span></td>
+                    <td class="cell-sub"><%= timeAgo(review.created_at) %></td>
+                    <td><span class="badge <%= review.is_approved ? 'green' : 'gray' %>"><%= review.is_approved ? 'Live' : 'Hidden' %></span></td>
+                    <td>
+                      <div class="cell-actions">
+                        <form action="/chef/reviews/<%= review.id %>/toggle" method="post" class="inline-form">
+                          <button class="action-btn" type="submit"><%= review.is_approved ? 'Hide' : 'Approve' %></button>
+                        </form>
+                        <form action="/chef/reviews/<%= review.id %>/delete" method="post" class="inline-form" onsubmit="return confirm('Delete this review permanently?');">
+                          <button class="action-btn danger" type="submit">Delete</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

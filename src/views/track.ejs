@@ -1,0 +1,104 @@
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a> / Track order</div>
+    <span class="eyebrow">Follow your food</span>
+    <h1>Track your order</h1>
+    <p>Enter the order number from your confirmation and the phone number you used at checkout to see live status.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:900px">
+    <div class="track-card">
+      <form action="/track" method="get" class="form-grid">
+        <label>Order number<input name="order" value="<%= orderNumber %>" required placeholder="e.g. CK-MXYZ1234-AB12"></label>
+        <label>Phone number<input name="phone" value="<%= phone %>" required placeholder="Number used at checkout" inputmode="tel"></label>
+        <div class="full"><button class="btn btn-primary" type="submit">Track order →</button></div>
+      </form>
+
+      <% if (error) { %>
+        <div class="flash flash-error" style="margin-top:1.2rem"><span><%= error %></span></div>
+      <% } %>
+
+      <% if (order) { %>
+        <div style="border-top:1px solid var(--line);margin-top:1.8rem;padding-top:1.6rem">
+          <div class="dash-head" style="margin-bottom:1.2rem">
+            <div>
+              <span class="eyebrow">Order details</span>
+              <h2 style="font-size:1.6rem;margin:0"><%= order.order_number %></h2>
+              <p class="small">Placed <%= timeAgo(order.created_at) %> · <%= items.length %> item<%= items.length === 1 ? '' : 's' %></p>
+            </div>
+            <span class="badge <%= statusMeta(order.status).cls %>"><%= statusMeta(order.status).icon %> <%= statusMeta(order.status).label %></span>
+          </div>
+
+          <% if (['rejected', 'cancelled'].includes(order.status)) { %>
+            <div class="flash flash-error"><span>This order was <%= order.status %>. Please contact us if you think this is a mistake.</span></div>
+          <% } else { %>
+            <% const steps = ['pending','accepted','assigned','picked_up','on_the_way','delivered']; %>
+            <% const currentIndex = steps.indexOf(order.status); %>
+            <ul class="timeline">
+              <% steps.forEach(function(step, index) { %>
+                <li class="<%= index <= currentIndex ? 'current' : '' %>">
+                  <strong><%= statusMeta(step).label %></strong>
+                  <span><%= index <= currentIndex ? 'Completed' : 'Pending' %></span>
+                </li>
+              <% }); %>
+            </ul>
+          <% } %>
+
+          <div class="grid-2" style="margin-top:1.6rem">
+            <div>
+              <div class="panel">
+                <div class="panel-head"><h3>Your items</h3></div>
+                <div class="panel-body">
+                  <% items.forEach(function(item) { %>
+                    <div class="order-item-line">
+                      <img class="thumb" src="<%= item.image_url %>" alt="">
+                      <div style="flex:1">
+                        <div class="item-name"><%= item.name %></div>
+                        <div class="item-sub">Qty <%= item.quantity %> × <%= money(item.price) %></div>
+                      </div>
+                      <strong class="small"><%= money(item.price * item.quantity) %></strong>
+                    </div>
+                  <% }); %>
+                  <div class="summary-line total"><span>Total paid / payable</span><span><%= money(order.total) %></span></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="panel">
+                <div class="panel-head"><h3>Delivery info</h3></div>
+                <div class="panel-body">
+                  <div class="order-summary">
+                    <div class="summary-line"><span>Customer</span><strong><%= order.customer_name %></strong></div>
+                    <div class="summary-line"><span>Phone</span><strong><%= order.customer_phone %></strong></div>
+                    <div class="summary-line"><span>Address</span><strong style="text-align:right;max-width:60%"><%= order.address %></strong></div>
+                    <div class="summary-line"><span>Payment</span><strong><%= order.payment_method === 'upi' ? 'UPI on delivery' : 'Cash on delivery' %></strong></div>
+                    <% if (order.delivery_name) { %>
+                      <div class="summary-line"><span>Delivery partner</span><strong><%= order.delivery_name %> <%= order.delivery_phone ? '· ' + order.delivery_phone : '' %></strong></div>
+                    <% } %>
+                    <% if (order.notes) { %><div class="summary-line"><span>Your note</span><strong style="text-align:right;max-width:60%"><%= order.notes %></strong></div><% } %>
+                  </div>
+                </div>
+              </div>
+              <% if (history.length) { %>
+                <div class="panel">
+                  <div class="panel-head"><h3>Status history</h3></div>
+                  <div class="panel-body">
+                    <% history.forEach(function(h) { %>
+                      <div class="summary-line small"><span><strong><%= statusMeta(h.status).label %></strong><br><span class="muted"><%= h.note || '' %></span></span><span class="muted"><%= timeAgo(h.created_at) %></span></div>
+                    <% }); %>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,58 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h1>Customer orders</h1>
+        <p>Accept new orders, assign riders and keep everything moving.</p>
+      </div>
+      <span class="small muted">Total: <%= orders.length %> shown</span>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="filter-tabs">
+          <a href="/chef/orders" class="<%= !status ? 'active' : '' %>">All</a>
+          <% ['pending','accepted','assigned','picked_up','on_the_way','delivered','rejected','cancelled'].forEach(function(s) { %>
+            <% if (counts[s]) { %>
+              <a href="/chef/orders?status=<%= s %>" class="<%= status === s ? 'active' : '' %>"><%= statusMeta(s).label %> (<%= counts[s] %>)</a>
+            <% } %>
+          <% }); %>
+        </div>
+        <form class="search-inline" action="/chef/orders" method="get">
+          <% if (status) { %><input type="hidden" name="status" value="<%= status %>"><% } %>
+          <input name="q" value="<%= q %>" placeholder="Order no, name or phone" aria-label="Search orders">
+          <button class="btn btn-sm btn-outline" type="submit">Search</button>
+        </form>
+      </div>
+      <div class="panel-body flush">
+        <% if (!orders.length) { %>
+          <div class="empty-state"><div class="empty-icon">🧾</div><h3>No orders found</h3><p>Try a different filter or search term.</p></div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Delivery partner</th><th>Status</th><th>Placed</th><th></th></tr></thead>
+              <tbody>
+                <% orders.forEach(function(order) { %>
+                  <tr>
+                    <td><span class="cell-title"><%= order.order_number %></span></td>
+                    <td><div class="cell-title"><%= order.customer_name %></div><div class="cell-sub"><%= order.customer_phone %></div></td>
+                    <td class="cell-sub"><%= order.item_count || '—' %></td>
+                    <td><strong><%= money(order.total) %></strong></td>
+                    <td class="cell-sub"><%= order.delivery_name || 'Not assigned' %></td>
+                    <td><span class="badge <%= statusMeta(order.status).cls %>"><%= statusMeta(order.status).label %></span></td>
+                    <td class="cell-sub"><%= timeAgo(order.created_at) %></td>
+                    <td><a class="action-btn primary" href="/chef/orders/<%= order.id %>">Manage →</a></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

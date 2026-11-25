@@ -1,0 +1,116 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h1>Kitchen overview</h1>
+        <p>Here's what's happening at <%= settings.kitchen_name %> today.</p>
+      </div>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+        <a href="/chef/orders?status=pending" class="btn btn-sm btn-primary">Pending orders (<%= stats.pending %>)</a>
+        <a href="/chef/menu/new" class="btn btn-sm btn-dark">+ Add dish</a>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card accent">
+        <div class="stat-label">Pending orders</div>
+        <div class="stat-value"><%= stats.pending %></div>
+        <div class="stat-sub">Need your attention</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active orders</div>
+        <div class="stat-value"><%= stats.active %></div>
+        <div class="stat-sub">Accepted / on the way</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Today's orders</div>
+        <div class="stat-value"><%= stats.today %></div>
+        <div class="stat-sub">Since midnight</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Today's revenue</div>
+        <div class="stat-value"><%= money(stats.revenue) %></div>
+        <div class="stat-sub">Excluding rejected orders</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Recent orders</h2>
+          <a class="link-arrow small" href="/chef/orders">View all →</a>
+        </div>
+        <div class="panel-body flush">
+          <% if (!recentOrders.length) { %>
+            <div class="empty-state"><div class="empty-icon">🧾</div><h3>No orders yet</h3><p>New orders will show up here.</p></div>
+          <% } else { %>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Status</th><th>Time</th><th></th></tr></thead>
+                <tbody>
+                  <% recentOrders.forEach(function(order) { %>
+                    <tr>
+                      <td><span class="cell-title"><%= order.order_number %></span></td>
+                      <td><div class="cell-title"><%= order.customer_name %></div><div class="cell-sub"><%= order.customer_phone %></div></td>
+                      <td><strong><%= money(order.total) %></strong></td>
+                      <td><span class="badge <%= statusMeta(order.status).cls %>"><%= statusMeta(order.status).label %></span></td>
+                      <td class="cell-sub"><%= timeAgo(order.created_at) %></td>
+                      <td><a class="action-btn" href="/chef/orders/<%= order.id %>">Open</a></td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <div class="panel-head"><h3>Kitchen snapshot</h3></div>
+          <div class="panel-body">
+            <div class="order-summary">
+              <div class="summary-line"><span>Menu items</span><strong><%= stats.menu %></strong></div>
+              <div class="summary-line"><span>Available now</span><strong><%= stats.available %></strong></div>
+              <div class="summary-line"><span>Active riders</span><strong><%= stats.riders %></strong></div>
+              <div class="summary-line"><span>Reviews to moderate</span><strong><%= stats.reviews %></strong></div>
+              <div class="summary-line"><span>Unread messages</span><strong><%= stats.messages %></strong></div>
+            </div>
+          </div>
+        </div>
+
+        <%- include('../partials/demo-account', { role: 'chef' }) %>
+
+        <div class="panel">
+          <div class="panel-head"><h3>Most ordered dishes</h3></div>
+          <div class="panel-body">
+            <% if (!topItems.length) { %><p class="muted small">No dish data yet.</p><% } %>
+            <% topItems.forEach(function(item, index) { %>
+              <div class="order-item-line">
+                <span class="badge soft"><%= index + 1 %></span>
+                <img class="thumb" src="<%= item.image_url %>" alt="">
+                <div style="flex:1"><div class="item-name"><%= item.name %></div><div class="item-sub"><%= item.times_ordered %> orders</div></div>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Quick actions</h2></div>
+      <div class="panel-body">
+        <div class="category-grid" style="grid-template-columns:repeat(4,1fr)">
+          <a class="category-tile" href="/chef/orders"><div class="cat-emoji">🧾</div><strong>Manage orders</strong><span>Accept, assign &amp; track →</span></a>
+          <a class="category-tile" href="/chef/menu"><div class="cat-emoji">📋</div><strong>Edit menu</strong><span>Prices, images &amp; stock →</span></a>
+          <a class="category-tile" href="/chef/staff"><div class="cat-emoji">🚴</div><strong>Delivery partners</strong><span>Add &amp; manage riders →</span></a>
+          <a class="category-tile" href="/chef/settings"><div class="cat-emoji">⚙️</div><strong>Settings</strong><span>Kitchen details &amp; password →</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

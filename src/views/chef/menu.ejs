@@ -1,0 +1,64 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h1>Manage menu</h1>
+        <p>Add dishes, change prices, update images and control what customers can order.</p>
+      </div>
+      <a href="/chef/menu/new" class="btn btn-sm btn-primary">+ Add new dish</a>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>All dishes (<%= items.length %>)</h2>
+        <span class="small muted"><%= items.filter(function(i){ return i.is_available; }).length %> available · <%= items.filter(function(i){ return !i.is_available; }).length %> unavailable</span>
+      </div>
+      <div class="panel-body flush">
+        <% if (!items.length) { %>
+          <div class="empty-state"><div class="empty-icon">📋</div><h3>Your menu is empty</h3><p>Add your first dish to get started.</p></div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Dish</th><th>Category</th><th>Price</th><th>Type</th><th>Prep</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody>
+                <% items.forEach(function(item) { %>
+                  <tr>
+                    <td>
+                      <div class="cell-with-img">
+                        <img class="thumb" src="<%= item.image_url %>" alt="">
+                        <div><div class="cell-title"><%= item.name %> <% if (item.is_popular) { %><span class="badge soft" style="margin-left:.3rem">★ Popular</span><% } %></div><div class="cell-sub"><%= item.description.slice(0, 58) %><%= item.description.length > 58 ? '…' : '' %></div></div>
+                      </div>
+                    </td>
+                    <td class="cell-sub"><%= item.category_name %></td>
+                    <td><strong><%= money(item.price) %></strong></td>
+                    <td><span class="badge <%= item.is_veg ? 'green' : 'red' %>"><%= item.is_veg ? 'Veg' : 'Non-veg' %></span></td>
+                    <td class="cell-sub"><%= item.prep_minutes %> min</td>
+                    <td>
+                      <form action="/chef/menu/<%= item.id %>/toggle" method="post" class="inline-form">
+                        <button class="badge <%= item.is_available ? 'green' : 'gray' %>" style="border:0" type="submit"><%= item.is_available ? '● Available' : '○ Unavailable' %></button>
+                      </form>
+                    </td>
+                    <td>
+                      <div class="cell-actions">
+                        <a class="action-btn" href="/chef/menu/<%= item.id %>/edit">Edit</a>
+                        <form action="/chef/menu/<%= item.id %>/delete" method="post" class="inline-form" onsubmit="return confirm('Delete <%= item.name %> from the menu?');">
+                          <button class="action-btn danger" type="submit">Delete</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

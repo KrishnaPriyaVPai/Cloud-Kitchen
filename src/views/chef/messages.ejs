@@ -1,0 +1,47 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h1>Contact messages</h1>
+        <p>Every message from the contact form lands here.</p>
+      </div>
+    </div>
+
+    <% if (!messages.length) { %>
+      <div class="panel"><div class="empty-state"><div class="empty-icon">✉️</div><h3>No messages yet</h3><p>Messages sent through the contact form will appear here.</p></div></div>
+    <% } else { %>
+      <div class="panel">
+        <div class="panel-body flush">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>From</th><th>Subject</th><th>Message</th><th>Received</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                <% messages.forEach(function(msg) { %>
+                  <tr>
+                    <td><div class="cell-title"><%= msg.name %></div><div class="cell-sub"><%= msg.email %><br><%= msg.phone || '' %></div></td>
+                    <td class="cell-title"><%= msg.subject || '—' %></td>
+                    <td style="max-width:420px"><span class="cell-sub"><%= msg.message %></span></td>
+                    <td class="cell-sub"><%= timeAgo(msg.created_at) %></td>
+                    <td><span class="badge <%= msg.is_read ? 'gray' : 'amber' %>"><%= msg.is_read ? 'Read' : 'New' %></span></td>
+                    <td>
+                      <div class="cell-actions">
+                        <% if (!msg.is_read) { %>
+                          <form action="/chef/messages/<%= msg.id %>/read" method="post" class="inline-form"><button class="action-btn" type="submit">Mark read</button></form>
+                        <% } %>
+                        <form action="/chef/messages/<%= msg.id %>/delete" method="post" class="inline-form" onsubmit="return confirm('Delete this message?');"><button class="action-btn danger" type="submit">Delete</button></form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

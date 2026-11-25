@@ -1,0 +1,85 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h1><%= order.order_number %></h1>
+        <p>Assigned to you · placed <%= timeAgo(order.created_at) %></p>
+      </div>
+      <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+        <span class="badge <%= statusMeta(order.status).cls %>"><%= statusMeta(order.status).icon %> <%= statusMeta(order.status).label %></span>
+        <a href="/delivery/orders" class="btn btn-sm btn-outline">← My deliveries</a>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="panel">
+          <div class="panel-head"><h2>Delivery details</h2></div>
+          <div class="panel-body">
+            <div class="order-summary">
+              <div class="summary-line"><span>Customer</span><strong><%= order.customer_name %></strong></div>
+              <div class="summary-line"><span>Phone</span><strong><a href="tel:<%= order.customer_phone %>"><%= order.customer_phone %></a></strong></div>
+              <div class="summary-line"><span>Address</span><strong style="text-align:right;max-width:65%"><%= order.address %></strong></div>
+              <div class="summary-line"><span>Order value</span><strong><%= money(order.total) %></strong></div>
+              <% if (order.notes) { %><div class="summary-line"><span>Note</span><strong style="text-align:right;max-width:65%"><%= order.notes %></strong></div><% } %>
+            </div>
+            <a class="btn btn-sm btn-outline" style="margin-top:1rem" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(order.address) %>">Open address in Maps ↗</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Items in this order</h2></div>
+          <div class="panel-body">
+            <% items.forEach(function(item) { %>
+              <div class="order-item-line">
+                <img class="thumb" src="<%= item.image_url %>" alt="">
+                <div style="flex:1"><div class="item-name"><%= item.name %></div><div class="item-sub"><%= money(item.price) %> each</div></div>
+                <span class="qty-pill">× <%= item.quantity %></span>
+                <strong class="small"><%= money(item.price * item.quantity) %></strong>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>Status history</h3></div>
+          <div class="panel-body">
+            <ul class="timeline">
+              <% history.forEach(function(h, index) { %>
+                <li class="<%= index === 0 ? 'current' : '' %>">
+                  <strong><%= statusMeta(h.status).label %></strong>
+                  <span><%= h.note || '' %> — <%= timeAgo(h.created_at) %></span>
+                </li>
+              <% }); %>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <div class="panel-head"><h2>Update status</h2></div>
+          <div class="panel-body">
+            <% const transitions = { assigned: { label: 'Picked up from kitchen', hint: 'Confirm you have collected the order from the kitchen.' }, picked_up: { label: 'On the way', hint: 'Let the customer know you are on your way.' }, on_the_way: { label: 'Mark as delivered', hint: 'Confirm the order reached the customer.' } }; %>
+            <% if (transitions[order.status]) { %>
+              <div class="action-box">
+                <h4>Next step</h4>
+                <p class="small muted"><%= transitions[order.status].hint %></p>
+                <form action="/delivery/orders/<%= order.id %>/status" method="post" onsubmit="return confirm('<%= transitions[order.status].label %>?');">
+                  <button class="btn btn-primary btn-block" type="submit"><%= transitions[order.status].label %> →</button>
+                </form>
+              </div>
+            <% } else { %>
+              <div class="flash flash-success"><span>This order is <%= order.status %>. No further updates needed.</span></div>
+            <% } %>
+            <p class="form-hint" style="margin-top:1rem">Status updates are recorded and visible to the chef and customer.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

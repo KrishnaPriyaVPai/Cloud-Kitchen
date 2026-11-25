@@ -1,0 +1,44 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container" style="max-width:860px">
+    <div class="dash-head">
+      <div>
+        <h1>My profile</h1>
+        <p>Keep your contact details current so the kitchen can reach you.</p>
+      </div>
+    </div>
+
+    <div class="grid-2-even">
+      <div class="panel">
+        <div class="panel-head"><h2>Personal details</h2></div>
+        <div class="panel-body">
+          <form action="/delivery/profile" method="post">
+            <label>Full name<input name="name" value="<%= me.name %>" required></label>
+            <label style="margin-top:1rem">Phone<input name="phone" value="<%= me.phone || '' %>" inputmode="tel"></label>
+            <label style="margin-top:1rem">Vehicle<input name="vehicle" value="<%= me.vehicle || '' %>" placeholder="Bike / cycle and registration"></label>
+            <button class="btn btn-primary" type="submit" style="margin-top:1.2rem">Save profile →</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Change password</h2></div>
+        <div class="panel-body">
+          <form action="/delivery/password" method="post">
+            <label>Current password<input name="current_password" type="password" required autocomplete="current-password"></label>
+            <label style="margin-top:1rem">New password<input name="new_password" type="password" minlength="8" required autocomplete="new-password"></label>
+            <p class="form-hint">At least 8 characters.</p>
+            <button class="btn btn-dark" type="submit" style="margin-top:.8rem">Update password</button>
+          </form>
+          <div class="order-summary" style="margin-top:1.6rem;border-top:1px solid var(--line);padding-top:1rem">
+            <div class="summary-line"><span>Email</span><strong><%= me.email %></strong></div>
+            <div class="summary-line"><span>Account status</span><strong><%= me.is_active ? 'Active' : 'Inactive' %></strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

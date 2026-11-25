@@ -1,0 +1,61 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h1>Delivery partners</h1>
+        <p>Add riders, share their login details and control who is active for assignments.</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-head"><h2>Add a delivery partner</h2></div>
+        <div class="panel-body">
+          <form action="/chef/staff" method="post">
+            <div class="form-grid">
+              <label>Full name<input name="name" required placeholder="e.g. Ravi Kumar"></label>
+              <label>Phone<input name="phone" placeholder="+91 …" inputmode="tel"></label>
+              <label class="full">Email address<input name="email" type="email" required placeholder="ravi@cloudplate.in"></label>
+              <label class="full">Password<input name="password" type="password" required minlength="8" placeholder="At least 8 characters"></label>
+              <label class="full">Vehicle (optional)<input name="vehicle" placeholder="e.g. Honda Activa · KA 03 AB 1234"></label>
+            </div>
+            <button class="btn btn-primary" type="submit" style="margin-top:1rem">Create rider account →</button>
+            <p class="form-hint">Share the email and password with the rider so they can sign in at /login.</p>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>All accounts</h2><span class="small muted"><%= staff.length %> total</span></div>
+        <div class="panel-body flush">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Role</th><th>Contact</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                <% staff.forEach(function(person) { %>
+                  <tr>
+                    <td><div class="cell-title"><%= person.name %></div><div class="cell-sub"><%= person.email %></div></td>
+                    <td><span class="badge <%= person.role === 'chef' ? 'violet' : 'blue' %>"><%= person.role === 'chef' ? 'Chef / Admin' : 'Delivery' %></span></td>
+                    <td class="cell-sub"><%= person.phone || '—' %><br><%= person.vehicle || '' %></td>
+                    <td><span class="badge <%= person.is_active ? 'green' : 'gray' %>"><%= person.is_active ? 'Active' : 'Inactive' %></span></td>
+                    <td>
+                      <% if (person.role === 'delivery') { %>
+                        <form action="/chef/staff/<%= person.id %>/toggle" method="post" class="inline-form">
+                          <button class="action-btn" type="submit"><%= person.is_active ? 'Deactivate' : 'Activate' %></button>
+                        </form>
+                      <% } else { %><span class="cell-sub">—</span><% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

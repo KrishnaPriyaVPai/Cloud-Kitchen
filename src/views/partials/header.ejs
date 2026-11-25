@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="<%= settings.tagline %> Freshly prepared food, delivered to your door.">
+  <meta name="theme-color" content="#12467a">
+  <title><%= title %> · <%= settings.kitchen_name %></title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body id="top" class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="/" aria-label="<%= settings.kitchen_name %> home">
+        <img src="/cloudkitchen-icon.png" alt="" class="brand-logo" aria-hidden="true">
+        <span class="brand-text"><strong><%= settings.short_name %></strong></span>
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+        <a href="/" class="<%= active === 'home' ? 'active' : '' %>">Home</a>
+        <a href="/menu" class="<%= active === 'menu' ? 'active' : '' %>">Menu</a>
+        <a href="/about" class="<%= active === 'about' ? 'active' : '' %>">About</a>
+        <a href="/contact" class="<%= active === 'contact' ? 'active' : '' %>">Contact</a>
+        <a href="/track" class="<%= active === 'track' ? 'active' : '' %>">Track order</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="cart-btn" id="cart-toggle" type="button" aria-label="Open cart">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L20 8H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="1.4" fill="currentColor"/><circle cx="17" cy="20" r="1.4" fill="currentColor"/></svg>
+          <span class="cart-count" id="cart-count">0</span>
+        </button>
+        <% if (user) { %>
+          <% if (user.role === 'chef') { %>
+            <a class="btn btn-sm btn-dark" href="/chef">Admin page</a>
+          <% } else { %>
+            <a class="btn btn-sm btn-dark" href="/delivery">Dashboard</a>
+          <% } %>
+        <% } else { %>
+          <a class="btn btn-sm btn-outline" href="/login">Sign in</a>
+        <% } %>
+      </div>
+    </div>
+
+    <% if (user) { %>
+      <div class="staffbar">
+        <div class="container staffbar-inner">
+          <span class="staffbar-title"><span class="pulse-dot"></span> <%= user.name %> · <%= user.role === 'chef' ? 'Kitchen Admin' : 'Delivery Partner' %></span>
+          <nav class="staffbar-nav">
+            <% if (user.role === 'chef') { %>
+              <a href="/chef" class="<%= active === 'chef' ? 'active' : '' %>">Overview</a>
+              <a href="/chef/orders" class="<%= active === 'chef-orders' ? 'active' : '' %>">Orders</a>
+              <a href="/chef/menu" class="<%= active === 'chef-menu' ? 'active' : '' %>">Menu</a>
+              <a href="/chef/staff" class="<%= active === 'chef-staff' ? 'active' : '' %>">Riders</a>
+              <a href="/chef/reviews" class="<%= active === 'chef-reviews' ? 'active' : '' %>">Reviews</a>
+              <a href="/chef/messages" class="<%= active === 'chef-messages' ? 'active' : '' %>">Messages</a>
+              <a href="/chef/settings" class="<%= active === 'chef-settings' ? 'active' : '' %>">Settings</a>
+            <% } else { %>
+              <a href="/delivery" class="<%= active === 'delivery' ? 'active' : '' %>">Overview</a>
+              <a href="/delivery/orders" class="<%= active === 'delivery-orders' ? 'active' : '' %>">My deliveries</a>
+              <a href="/delivery/profile" class="<%= active === 'delivery-profile' ? 'active' : '' %>">Profile</a>
+            <% } %>
+          </nav>
+          <form action="/logout" method="post" class="staffbar-logout"><button type="submit">Sign out</button></form>
+        </div>
+      </div>
+    <% } %>
+  </header>
+
+  <% if (flash && flash.length) { %>
+    <div class="container flash-stack">
+      <% flash.forEach(function(f) { %>
+        <div class="flash flash-<%= f.type %>">
+          <span><%= f.message %></span>
+          <button type="button" class="flash-close" aria-label="Dismiss">×</button>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
