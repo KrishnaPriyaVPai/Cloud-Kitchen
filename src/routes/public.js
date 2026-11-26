@@ -1,5 +1,6 @@
 const express = require('express');
 const { all, get, run, addHistory } = require('../db');
+const { sendContactEmail } = require('../resend');
 
 const router = express.Router();
 
@@ -65,21 +66,38 @@ router.get('/contact', (_req, res) => {
   res.render('contact', { title: 'Contact Us', active: 'contact' });
 });
 
-router.post('/contact', (req, res) => {
+router.post('/contact', async (req, res) => {
   const { name, email, phone, subject, message } = req.body;
   if (!name || !email || !message || !/^\S+@\S+\.\S+$/.test(email)) {
     req.flash('error', 'Please fill in your name, a valid email and your message.');
     return res.redirect('/contact');
   }
+
+  const details = {
+    name: String(name).trim(),
+    email: String(email).trim(),
+    phone: phone ? String(phone).trim() : '',
+    subject: subject ? String(subject).trim() : '',
+    message: String(message).trim()
+  };
+
   run(
     'INSERT INTO contact_messages (name, email, phone, subject, message) VALUES (?, ?, ?, ?, ?)',
-    String(name).trim(),
-    String(email).trim(),
-    phone ? String(phone).trim() : null,
-    subject ? String(subject).trim() : null,
-    String(message).trim()
+    details.name,
+    details.email,
+    details.phone || null,
+    details.subject || null,
+    details.message
   );
-  req.flash('success', 'Thanks for reaching out! We will get back to you shortly.');
+
+  try {
+    await sendContactEmail(details);
+    req.flash('success', 'Thanks for reaching out! We will get back to you shortly.');
+  } catch (err) {
+    console.error('Contact email could not be sent:', err.message);
+    req.flash('success', 'Thanks for reaching out! We saved your message.');
+    req.flash('error', 'Email notification could not be sent, but your message is saved.');
+  }
   res.redirect('/contact');
 });
 

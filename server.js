@@ -1,3 +1,7 @@
+if (typeof process.loadEnvFile === 'function') {
+  try { process.loadEnvFile(); } catch { /* .env is optional in production */ }
+}
+
 const path = require('node:path');
 const express = require('express');
 const { session, SQLiteSessionStore, installAppLocals } = require('./src/middleware');
