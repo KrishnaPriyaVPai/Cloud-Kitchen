@@ -364,7 +364,7 @@ const settingDefaults = {
   offer_enabled: '1',
   offer_title: 'Fresh drop: 20% off your first order',
   offer_text: 'Use code WELCOME20 at checkout. Cooked fresh, delivered hot.',
-  offer_image_url: '/cloudkitchenlogo.jpeg',
+  offer_image_url: '',
   offer_link: '/menu',
   offerspace_enabled: '1',
   offers_per_view: '1',
@@ -390,6 +390,8 @@ if (!get('SELECT COUNT(*) AS count FROM offers').count) {
     setting('offer_enabled', '1') === '1' ? 1 : 0
   );
 }
+
+run("UPDATE offers SET background_image_url = '' WHERE background_image_url IN ('/cloudkitchenlogo.jpeg', '/cloudkitchen-icon.png')");
 
 seed();
 

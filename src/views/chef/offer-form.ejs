@@ -23,7 +23,7 @@
           <label style="margin-top:1rem">Offer text<textarea name="text" rows="3" placeholder="Short promotional line"><%= current.text || '' %></textarea></label>
 
           <label style="margin-top:1rem">Upload background image<input type="file" name="background_image" accept="image/*"></label>
-          <p class="form-hint">JPG, PNG, WEBP, GIF or AVIF up to 5 MB. Uploading replaces the current background.</p>
+          <p class="form-hint">Leave blank for the standard gradient style. Uploaded images replace the current background (JPG, PNG, WEBP, GIF or AVIF up to 5 MB).</p>
           <label style="margin-top:1rem">Or use a background image URL<input name="background_image_url" value="<%= current.background_image_url || '' %>" placeholder="/uploads/banner.jpg or https://..."></label>
           <% if (current.background_image_url) { %>
             <div class="offer-preview"><img src="<%= current.background_image_url %>" alt="Current offer background"></div>

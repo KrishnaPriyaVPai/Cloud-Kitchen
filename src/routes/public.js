@@ -24,6 +24,7 @@ router.get('/', (_req, res) => {
   res.render('home', {
     title: res.locals.settings.kitchen_name,
     active: 'home',
+    bodyClass: 'home-page',
     categories,
     featuredReviews
   });

@@ -28,7 +28,9 @@
                 <% const offerLink = String(offer.link || '').trim(); %>
                 <% const offerExternal = /^https?:\/\//i.test(offerLink); %>
                 <article class="offer-card">
-                  <img class="offer-bg" src="<%= offer.background_image_url %>" alt="" aria-hidden="true">
+                  <% if (offer.background_image_url) { %>
+                    <img class="offer-bg" src="<%= offer.background_image_url %>" alt="" aria-hidden="true">
+                  <% } %>
                   <div class="offer-shade"></div>
                   <div class="offer-content">
                     <span class="offer-tag">Limited time</span>
