@@ -1,7 +1,22 @@
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
 const session = require('express-session');
 const { run, get, all, allSettings } = require('./db');
 
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24;
+
+function assetVersion(file) {
+  try {
+    const fullPath = path.join(__dirname, '..', 'public', file);
+    return crypto.createHash('sha256').update(fs.readFileSync(fullPath)).digest('hex').slice(0, 10);
+  } catch {
+    return '1';
+  }
+}
+
+const CSS_VERSION = assetVersion('css/style.css');
+const JS_VERSION = assetVersion('js/app.js');
 
 class SQLiteSessionStore extends session.Store {
   get(sid, callback) {
@@ -74,6 +89,8 @@ function installAppLocals(app) {
     res.locals.user = req.session && req.session.user ? req.session.user : null;
     res.locals.flash = flashes;
     res.locals.currentYear = new Date().getFullYear();
+    res.locals.cssVersion = CSS_VERSION;
+    res.locals.jsVersion = JS_VERSION;
     res.locals.money = (value) => `₹${Number(value || 0).toLocaleString('en-IN')}`;
     res.locals.whatsappLink = (phone) => `https://wa.me/${String(phone || '').replace(/\D/g, '')}`;
     res.locals.statusMeta = statusMeta;
