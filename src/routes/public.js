@@ -63,26 +63,10 @@ router.get('/menu', (req, res) => {
   const items = menuQuery(`WHERE ${clauses.join(' AND ')}`, params);
   const categories = all('SELECT * FROM categories ORDER BY sort_order');
 
-  const groups = [];
-  items.forEach(function(item) {
-    let group = groups.find(function(entry) { return entry.slug === item.category_slug; });
-    if (!group) {
-      group = {
-        slug: item.category_slug,
-        name: item.category_name,
-        emoji: item.category_emoji,
-        items: []
-      };
-      groups.push(group);
-    }
-    group.items.push(item);
-  });
-
   res.render('menu', {
     title: 'Our Menu',
     active: 'menu',
     items,
-    groups,
     categories,
     filters: { category: category || '', veg: veg === '1', nonveg: nonveg === '1', q: q || '' }
   });
