@@ -1,0 +1,46 @@
+<%- include('../partials/header') %>
+
+<% const current = offer || {}; %>
+
+<div class="dash-page">
+  <div class="container" style="max-width:820px">
+    <div class="dash-head">
+      <div>
+        <h1><%= offer ? 'Edit offer' : 'Add offer' %></h1>
+        <p>Set the offer text and the background image shown in the offer space.</p>
+      </div>
+      <a href="/chef/offers" class="btn btn-sm btn-outline">← All offers</a>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <form action="<%= action %>" method="post" enctype="multipart/form-data">
+          <label class="check-label">
+            <input type="checkbox" name="is_active" value="1" <%= !offer || offer.is_active ? 'checked' : '' %>>
+            Show this offer on the website
+          </label>
+          <label>Offer title<input name="title" value="<%= current.title || '' %>" required placeholder="e.g. 20% off your first order"></label>
+          <label style="margin-top:1rem">Offer text<textarea name="text" rows="3" placeholder="Short promotional line"><%= current.text || '' %></textarea></label>
+
+          <label style="margin-top:1rem">Upload background image<input type="file" name="background_image" accept="image/*"></label>
+          <p class="form-hint">JPG, PNG, WEBP, GIF or AVIF up to 5 MB. Uploading replaces the current background.</p>
+          <label style="margin-top:1rem">Or use a background image URL<input name="background_image_url" value="<%= current.background_image_url || '' %>" placeholder="/uploads/banner.jpg or https://..."></label>
+          <% if (current.background_image_url) { %>
+            <div class="offer-preview"><img src="<%= current.background_image_url %>" alt="Current offer background"></div>
+          <% } %>
+
+          <label style="margin-top:1rem">Button link<input name="link" value="<%= current.link || '/menu' %>" placeholder="/menu or https://..."></label>
+          <label style="margin-top:1rem">Display order<input name="sort_order" type="number" value="<%= current.sort_order || 0 %>" placeholder="0"></label>
+          <p class="form-hint">Lower numbers appear first. Active offers are shown together below the navigation bar.</p>
+
+          <div style="display:flex;gap:.6rem;margin-top:1.2rem;flex-wrap:wrap">
+            <button class="btn btn-primary" type="submit"><%= offer ? 'Save changes' : 'Add offer' %></button>
+            <a class="btn btn-ghost" href="/chef/offers">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

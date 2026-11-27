@@ -1,12 +1,22 @@
+<% const siteTitle = settings.meta_title || settings.kitchen_name; %>
+<% const siteDescription = settings.meta_description || (settings.tagline + ' Freshly prepared food, delivered to your door.'); %>
+<% const logoUrl = settings.logo_url || '/cloudkitchen-icon.png'; %>
+<% const faviconUrl = settings.favicon_url || logoUrl; %>
+<% const pageTitle = title && title !== siteTitle && title !== settings.kitchen_name ? title + ' · ' + siteTitle : siteTitle; %>
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="<%= settings.tagline %> Freshly prepared food, delivered to your door.">
+  <meta name="description" content="<%= siteDescription %>">
+  <meta property="og:title" content="<%= pageTitle %>">
+  <meta property="og:description" content="<%= siteDescription %>">
+  <meta property="og:image" content="<%= logoUrl %>">
+  <meta property="og:site_name" content="<%= siteTitle %>">
   <meta name="theme-color" content="#12467a">
-  <title><%= title %> · <%= settings.kitchen_name %></title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
+  <title><%= pageTitle %></title>
+  <link rel="icon" href="<%= faviconUrl %>">
+  <link rel="apple-touch-icon" href="<%= faviconUrl %>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,7 +26,7 @@
   <header class="site-header">
     <div class="container nav-wrap">
       <a class="brand" href="/" aria-label="<%= settings.kitchen_name %> home">
-        <img src="/cloudkitchen-icon.png" alt="" class="brand-logo" aria-hidden="true">
+        <img src="<%= logoUrl %>" alt="" class="brand-logo" aria-hidden="true">
         <span class="brand-text"><strong><%= settings.short_name %></strong></span>
       </a>
 
@@ -59,6 +69,7 @@
               <a href="/chef/staff" class="<%= active === 'chef-staff' ? 'active' : '' %>">Riders</a>
               <a href="/chef/reviews" class="<%= active === 'chef-reviews' ? 'active' : '' %>">Reviews</a>
               <a href="/chef/messages" class="<%= active === 'chef-messages' ? 'active' : '' %>">Messages</a>
+              <a href="/chef/offers" class="<%= active === 'chef-offers' ? 'active' : '' %>">Offer space</a>
               <a href="/chef/settings" class="<%= active === 'chef-settings' ? 'active' : '' %>">Settings</a>
             <% } else { %>
               <a href="/delivery" class="<%= active === 'delivery' ? 'active' : '' %>">Overview</a>
@@ -71,6 +82,8 @@
       </div>
     <% } %>
   </header>
+
+  <%- include('offer-banner') %>
 
   <% if (flash && flash.length) { %>
     <div class="container flash-stack">

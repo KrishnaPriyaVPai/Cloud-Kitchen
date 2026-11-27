@@ -62,7 +62,9 @@ app.use((err, req, res, _next) => {
   if (res.headersSent) return;
   if (err.code === 'LIMIT_FILE_SIZE' || /image/i.test(err.message || '')) {
     req.flash && req.flash('error', 'That image is too large or not a supported format.');
-    return res.redirect('/chef/menu');
+    if (req.originalUrl.startsWith('/chef/offers') || req.originalUrl.startsWith('/chef/offerspace')) return res.redirect('/chef/offers');
+    if (req.originalUrl.startsWith('/chef/branding')) return res.redirect('/chef/settings');
+    return res.redirect(req.originalUrl.startsWith('/chef/settings') ? '/chef/settings' : '/chef/menu');
   }
   res.status(500).render('errors/500', { title: 'Something Went Wrong', active: '' });
 });

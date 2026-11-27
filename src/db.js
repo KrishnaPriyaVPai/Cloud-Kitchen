@@ -129,6 +129,18 @@ db.exec(`
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
 
+  CREATE TABLE IF NOT EXISTS offers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    text TEXT NOT NULL DEFAULT '',
+    background_image_url TEXT NOT NULL DEFAULT '',
+    link TEXT NOT NULL DEFAULT '',
+    is_active INTEGER NOT NULL DEFAULT 1,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
   CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
   CREATE INDEX IF NOT EXISTS idx_orders_delivery ON orders(delivery_boy_id);
   CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
@@ -346,6 +358,37 @@ function seed() {
       addHistory(order.lastInsertRowid, 'delivered', 'Delivered to customer', 'delivery');
     }
   }
+}
+
+const settingDefaults = {
+  offer_enabled: '1',
+  offer_title: 'Fresh drop: 20% off your first order',
+  offer_text: 'Use code WELCOME20 at checkout. Cooked fresh, delivered hot.',
+  offer_image_url: '/cloudkitchenlogo.jpeg',
+  offer_link: '/menu',
+  offerspace_enabled: '1',
+  offers_per_view: '1',
+  offerspace_bg_image_url: '',
+  meta_title: 'Cloud Kitchen',
+  meta_description: 'Freshly cooked food, delivered warm. Order fresh meals online from Cloud Kitchen with fast doorstep delivery.',
+  favicon_url: '/cloudkitchen-icon.png',
+  logo_url: '/cloudkitchen-icon.png'
+};
+
+for (const [key, value] of Object.entries(settingDefaults)) {
+  run('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)', key, value);
+}
+
+if (!get('SELECT COUNT(*) AS count FROM offers').count) {
+  run(
+    `INSERT INTO offers (title, text, background_image_url, link, is_active, sort_order)
+     VALUES (?, ?, ?, ?, ?, 0)`,
+    setting('offer_title', settingDefaults.offer_title),
+    setting('offer_text', settingDefaults.offer_text),
+    setting('offer_image_url', settingDefaults.offer_image_url),
+    setting('offer_link', settingDefaults.offer_link),
+    setting('offer_enabled', '1') === '1' ? 1 : 0
+  );
 }
 
 seed();

@@ -1,0 +1,88 @@
+<%- include('../partials/header') %>
+
+<div class="dash-page">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h1>Offer space</h1>
+        <p>Add one or more offers. Active offers appear below the navigation bar on every page.</p>
+      </div>
+      <a href="/chef/offers/new" class="btn btn-sm btn-primary">+ Add new offer</a>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Offer space settings</h2></div>
+      <div class="panel-body">
+        <form action="/chef/offerspace" method="post" enctype="multipart/form-data">
+          <label class="check-label">
+            <input type="checkbox" name="offerspace_enabled" value="1" <%= String(settings.offerspace_enabled || '1') !== '0' ? 'checked' : '' %>>
+            Show offer space on the website
+          </label>
+          <label>Offers shown at a time
+            <select name="offers_per_view">
+              <% ['1','2','3','4','all'].forEach(function(count) { %>
+                <option value="<%= count %>" <%= String(settings.offers_per_view || '1') === count ? 'selected' : '' %>>
+                  <%= count === 'all' ? 'All active offers' : count + (count === '1' ? ' offer' : ' offers') %>
+                </option>
+              <% }); %>
+            </select>
+          </label>
+          <label style="margin-top:1rem">Upload offer space background image<input type="file" name="offerspace_bg_image" accept="image/*"></label>
+          <p class="form-hint">JPG, PNG, WEBP, GIF or AVIF up to 5 MB. This sits behind all offer cards.</p>
+          <label style="margin-top:1rem">Or use a background image URL<input name="offerspace_bg_image_url" value="<%= settings.offerspace_bg_image_url || '' %>" placeholder="/uploads/banner.jpg or https://..."></label>
+          <% if (settings.offerspace_bg_image_url) { %>
+            <div class="offer-preview"><img src="<%= settings.offerspace_bg_image_url %>" alt="Current offer space background"></div>
+          <% } %>
+          <button class="btn btn-primary" type="submit" style="margin-top:.8rem">Save offer space</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>All offers (<%= offers.length %>)</h2>
+        <span class="small muted"><%= offers.filter(function(o){ return o.is_active; }).length %> active · <%= offers.filter(function(o){ return !o.is_active; }).length %> hidden</span>
+      </div>
+      <div class="panel-body flush">
+        <% if (!offers.length) { %>
+          <div class="empty-state"><div class="empty-icon">🎁</div><h3>No offers yet</h3><p>Add an offer to show a banner below the navigation bar.</p></div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Offer</th><th>Background</th><th>Order</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody>
+                <% offers.forEach(function(offer) { %>
+                  <tr>
+                    <td>
+                      <div class="cell-title"><%= offer.title %></div>
+                      <div class="cell-sub"><%= offer.text || 'No description' %></div>
+                    </td>
+                    <td><img class="thumb" src="<%= offer.background_image_url %>" alt=""></td>
+                    <td class="cell-sub"><%= offer.sort_order %></td>
+                    <td>
+                      <form action="/chef/offers/<%= offer.id %>/toggle" method="post" class="inline-form">
+                        <button class="badge <%= offer.is_active ? 'green' : 'gray' %>" style="border:0" type="submit"><%= offer.is_active ? '● Visible' : '○ Hidden' %></button>
+                      </form>
+                    </td>
+                    <td>
+                      <div class="cell-actions">
+                        <a class="action-btn" href="/chef/offers/<%= offer.id %>/edit">Edit</a>
+                        <form action="/chef/offers/<%= offer.id %>/delete" method="post" class="inline-form" onsubmit="return confirm('Delete this offer?');">
+                          <button class="action-btn danger" type="submit">Delete</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

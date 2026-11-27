@@ -307,6 +307,31 @@
     render();
   }
 
+  function initOfferCarousel() {
+    $$('.offer-banner').forEach((banner) => {
+      const track = banner.querySelector('.offer-track');
+      const prev = banner.querySelector('.offer-prev');
+      const next = banner.querySelector('.offer-next');
+      const counter = banner.querySelector('.offer-counter');
+      if (!track || !prev || !next || !track.children.length) return;
+
+      const total = track.children.length;
+      let index = 0;
+
+      function render() {
+        index = Math.max(0, Math.min(index, total - 1));
+        track.style.transform = `translateX(-${index * 100}%)`;
+        if (counter) counter.textContent = `${index + 1} / ${total}`;
+        prev.disabled = index === 0;
+        next.disabled = index === total - 1;
+      }
+
+      prev.addEventListener('click', () => { index -= 1; render(); });
+      next.addEventListener('click', () => { index += 1; render(); });
+      render();
+    });
+  }
+
   function initDietFilters() {
     const veg = document.querySelector('input[name="veg"]');
     const nonveg = document.querySelector('input[name="nonveg"]');
@@ -332,5 +357,6 @@
   initAuthTabs();
   initDietFilters();
   initReviewsCarousel();
+  initOfferCarousel();
   renderCart();
 })();

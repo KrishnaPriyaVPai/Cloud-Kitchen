@@ -1,5 +1,5 @@
 const express = require('express');
-const { all, get, run, addHistory } = require('../db');
+const { all, get, run, addHistory, allSettings } = require('../db');
 const upload = require('../upload');
 const { hashPassword, verifyPassword } = require('../security');
 const { requireRole } = require('../middleware');
@@ -34,6 +34,35 @@ function deliveryBoys() {
 
 function redirectBack(res, url) {
   res.redirect(url);
+}
+
+function safeOfferLink(value) {
+  const link = String(value || '').trim();
+  return /^(https?:\/\/|\/)/i.test(link) ? link : '/menu';
+}
+
+function safeAssetUrl(value, fallback = '') {
+  const url = String(value || '').trim();
+  return /^(https?:\/\/|\/)/i.test(url) ? url : fallback;
+}
+
+function offerPayload(body, file, existing = null) {
+  return {
+    title: String(body.title || '').trim(),
+    text: String(body.text || '').trim(),
+    background_image_url: file
+      ? `/uploads/${file.filename}`
+      : safeAssetUrl(body.background_image_url, existing ? existing.background_image_url : ''),
+    link: body.link === undefined && existing ? existing.link : safeOfferLink(body.link),
+    is_active: body.is_active ? 1 : 0,
+    sort_order: Number(body.sort_order) || 0
+  };
+}
+
+function validateOffer(payload) {
+  if (!payload.title) return 'Please enter an offer title.';
+  if (!payload.background_image_url) return 'Please provide a background image URL or upload an image.';
+  return null;
 }
 
 router.get('/', (_req, res) => {
@@ -405,6 +434,147 @@ router.post('/settings', (req, res) => {
   }
   req.flash('success', 'Kitchen details updated.');
   res.redirect('/chef/settings');
+});
+
+router.post(
+  '/branding',
+  upload.fields([{ name: 'logo_file', maxCount: 1 }, { name: 'favicon_file', maxCount: 1 }]),
+  (req, res) => {
+    const current = allSettings();
+    const logoFile = req.files && req.files.logo_file && req.files.logo_file[0];
+    const faviconFile = req.files && req.files.favicon_file && req.files.favicon_file[0];
+    const logoValue = logoFile
+      ? `/uploads/${logoFile.filename}`
+      : safeAssetUrl(req.body.logo_url, current.logo_url || '/cloudkitchen-icon.png');
+    const faviconInput = String(req.body.favicon_url || '').trim();
+    const faviconValue = faviconFile
+      ? `/uploads/${faviconFile.filename}`
+      : faviconInput
+        ? safeAssetUrl(faviconInput, current.favicon_url || logoValue)
+        : logoValue;
+
+    const values = [
+      ['meta_title', String(req.body.meta_title || '').trim() || current.meta_title || 'Cloud Kitchen'],
+      ['meta_description', String(req.body.meta_description || '').trim() || current.meta_description || ''],
+      ['logo_url', logoValue],
+      ['favicon_url', faviconValue]
+    ];
+    for (const [key, value] of values) {
+      run(
+        'INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value',
+        key,
+        value
+      );
+    }
+    req.flash('success', 'Title, description, logo and favicon updated.');
+    res.redirect('/chef/settings');
+  }
+);
+
+router.get('/offers', (_req, res) => {
+  const offers = all('SELECT * FROM offers ORDER BY sort_order, id');
+  res.render('chef/offers', { title: 'Offer Space', active: 'chef-offers', offers });
+});
+
+router.get('/offers/new', (_req, res) => {
+  res.render('chef/offer-form', {
+    title: 'Add Offer',
+    active: 'chef-offers',
+    offer: null,
+    action: '/chef/offers'
+  });
+});
+
+router.get('/offers/:id/edit', (req, res) => {
+  const offer = get('SELECT * FROM offers WHERE id = ?', req.params.id);
+  if (!offer) {
+    req.flash('error', 'Offer not found.');
+    return res.redirect('/chef/offers');
+  }
+  res.render('chef/offer-form', {
+    title: `Edit ${offer.title}`,
+    active: 'chef-offers',
+    offer,
+    action: `/chef/offers/${offer.id}`
+  });
+});
+
+router.post('/offers', upload.single('background_image'), (req, res) => {
+  const payload = offerPayload(req.body, req.file);
+  const error = validateOffer(payload);
+  if (error) {
+    req.flash('error', error);
+    return res.redirect('/chef/offers/new');
+  }
+  run(
+    `INSERT INTO offers (title, text, background_image_url, link, is_active, sort_order)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    payload.title, payload.text, payload.background_image_url,
+    payload.link, payload.is_active, payload.sort_order
+  );
+  req.flash('success', `${payload.title} added to the offer space.`);
+  res.redirect('/chef/offers');
+});
+
+router.post('/offers/:id', upload.single('background_image'), (req, res) => {
+  const existing = get('SELECT * FROM offers WHERE id = ?', req.params.id);
+  if (!existing) {
+    req.flash('error', 'Offer not found.');
+    return res.redirect('/chef/offers');
+  }
+  const payload = offerPayload(req.body, req.file, existing);
+  const error = validateOffer(payload);
+  if (error) {
+    req.flash('error', error);
+    return res.redirect(`/chef/offers/${existing.id}/edit`);
+  }
+  run(
+    `UPDATE offers SET title = ?, text = ?, background_image_url = ?, link = ?,
+      is_active = ?, sort_order = ?, updated_at = datetime('now') WHERE id = ?`,
+    payload.title, payload.text, payload.background_image_url, payload.link,
+    payload.is_active, payload.sort_order, existing.id
+  );
+  req.flash('success', `${payload.title} updated.`);
+  res.redirect('/chef/offers');
+});
+
+router.post('/offers/:id/toggle', (req, res) => {
+  const offer = get('SELECT id, title, is_active FROM offers WHERE id = ?', req.params.id);
+  if (!offer) return res.redirect('/chef/offers');
+  run('UPDATE offers SET is_active = ?, updated_at = datetime(\'now\') WHERE id = ?', offer.is_active ? 0 : 1, offer.id);
+  req.flash('success', `${offer.title} ${offer.is_active ? 'hidden' : 'shown'} on the website.`);
+  res.redirect('/chef/offers');
+});
+
+router.post('/offers/:id/delete', (req, res) => {
+  const offer = get('SELECT id, title FROM offers WHERE id = ?', req.params.id);
+  if (!offer) return res.redirect('/chef/offers');
+  run('DELETE FROM offers WHERE id = ?', offer.id);
+  req.flash('success', `${offer.title} removed from the offer space.`);
+  res.redirect('/chef/offers');
+});
+
+router.post('/offerspace', upload.single('offerspace_bg_image'), (req, res) => {
+  const requestedPerView = String(req.body.offers_per_view || '1');
+  const perView = ['1', '2', '3', '4', 'all'].includes(requestedPerView) ? requestedPerView : '1';
+  const background = req.file
+    ? `/uploads/${req.file.filename}`
+    : safeAssetUrl(req.body.offerspace_bg_image_url, '');
+
+  const values = [
+    ['offerspace_enabled', req.body.offerspace_enabled ? '1' : '0'],
+    ['offers_per_view', perView],
+    ['offerspace_bg_image_url', background]
+  ];
+  for (const [key, value] of values) {
+    run(
+      'INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value',
+      key,
+      value
+    );
+  }
+  req.flash('success', 'Offer space settings updated.');
+  res.redirect('/chef/offers');
 });
 
 router.post('/password', (req, res) => {

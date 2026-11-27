@@ -1,0 +1,49 @@
+<% if (String(settings.offerspace_enabled || '1') !== '0' && activeOffers && activeOffers.length) { %>
+  <% const requestedPerView = String(settings.offers_per_view || '1'); %>
+  <% const perView = requestedPerView === 'all'
+       ? activeOffers.length
+       : Math.max(1, Math.min(Number(requestedPerView) || 1, activeOffers.length)); %>
+  <% const pages = []; %>
+  <% for (let i = 0; i < activeOffers.length; i += perView) pages.push(activeOffers.slice(i, i + perView)); %>
+
+  <section class="offer-banner" aria-label="Current offers">
+    <% if (settings.offerspace_bg_image_url) { %>
+      <img class="offer-space-bg" src="<%= settings.offerspace_bg_image_url %>" alt="" aria-hidden="true">
+      <div class="offer-space-shade"></div>
+    <% } %>
+    <div class="container offer-space-wrap">
+      <% if (pages.length > 1) { %>
+        <div class="offer-nav">
+          <button class="offer-arrow offer-prev" type="button" aria-label="Previous offers">‹</button>
+          <span class="offer-counter">1 / <%= pages.length %></span>
+          <button class="offer-arrow offer-next" type="button" aria-label="Next offers">›</button>
+        </div>
+      <% } %>
+
+      <div class="offer-viewport">
+        <div class="offer-track" style="--per-view: <%= perView %>">
+          <% pages.forEach(function(pageOffers) { %>
+            <div class="offer-page">
+              <% pageOffers.forEach(function(offer) { %>
+                <% const offerLink = String(offer.link || '').trim(); %>
+                <% const offerExternal = /^https?:\/\//i.test(offerLink); %>
+                <article class="offer-card">
+                  <img class="offer-bg" src="<%= offer.background_image_url %>" alt="" aria-hidden="true">
+                  <div class="offer-shade"></div>
+                  <div class="offer-content">
+                    <span class="offer-tag">Limited time</span>
+                    <h2><%= offer.title %></h2>
+                    <% if (offer.text) { %><p><%= offer.text %></p><% } %>
+                    <% if (offerLink) { %>
+                      <a class="offer-link" href="<%= offerLink %>" <%= offerExternal ? 'target="_blank" rel="noopener"' : '' %>>View offer →</a>
+                    <% } %>
+                  </div>
+                </article>
+              <% }); %>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+  </section>
+<% } %>

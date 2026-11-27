@@ -21,11 +21,10 @@
             <div class="order-summary">
               <div class="summary-line"><span>Customer</span><strong><%= order.customer_name %></strong></div>
               <div class="summary-line"><span>Phone</span><strong><a href="tel:<%= order.customer_phone %>"><%= order.customer_phone %></a></strong></div>
-              <div class="summary-line"><span>Address</span><strong style="text-align:right;max-width:65%"><%= order.address %></strong></div>
+              <div class="summary-line"><span>Address</span><strong style="text-align:right;max-width:65%"><a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(order.address) %>"><%= order.address %></a></strong></div>
               <div class="summary-line"><span>Order value</span><strong><%= money(order.total) %></strong></div>
               <% if (order.notes) { %><div class="summary-line"><span>Note</span><strong style="text-align:right;max-width:65%"><%= order.notes %></strong></div><% } %>
             </div>
-            <a class="btn btn-sm btn-outline" style="margin-top:1rem" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(order.address) %>">Open address in Maps ↗</a>
           </div>
         </div>
 

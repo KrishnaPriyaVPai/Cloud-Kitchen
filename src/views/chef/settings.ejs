@@ -35,6 +35,31 @@
 
       <div>
         <div class="panel">
+          <div class="panel-head"><h2>Title, description & logo</h2></div>
+          <div class="panel-body">
+            <form action="/chef/branding" method="post" enctype="multipart/form-data">
+              <label>Site title<input name="meta_title" value="<%= settings.meta_title || settings.kitchen_name %>" placeholder="Cloud Kitchen"></label>
+              <label style="margin-top:1rem">Meta description<textarea name="meta_description" rows="3" placeholder="Short description for search results and social sharing"><%= settings.meta_description || '' %></textarea></label>
+
+              <label style="margin-top:1rem">Upload logo<input type="file" name="logo_file" accept="image/*"></label>
+              <label style="margin-top:.8rem">Or use a logo URL<input name="logo_url" value="<%= settings.logo_url || '' %>" placeholder="/uploads/logo.png or https://..."></label>
+              <% if (settings.logo_url) { %>
+                <div class="offer-preview"><img src="<%= settings.logo_url %>" alt="Current website logo"></div>
+              <% } %>
+
+              <label style="margin-top:1rem">Upload favicon<input type="file" name="favicon_file" accept="image/*"></label>
+              <label style="margin-top:.8rem">Or use a favicon URL<input name="favicon_url" value="<%= settings.favicon_url || '' %>" placeholder="/uploads/favicon.png or https://..."></label>
+              <p class="form-hint">Leave the favicon URL blank to use the logo image.</p>
+              <% if (settings.favicon_url) { %>
+                <div class="offer-preview"><img src="<%= settings.favicon_url %>" alt="Current favicon"></div>
+              <% } %>
+
+              <button class="btn btn-primary" type="submit" style="margin-top:.8rem">Save branding</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel">
           <div class="panel-head"><h2>Change password</h2></div>
           <div class="panel-body">
             <form action="/chef/password" method="post">

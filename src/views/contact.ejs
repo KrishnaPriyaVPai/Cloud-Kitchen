@@ -24,14 +24,13 @@
           </div>
           <div class="info-row">
             <span class="info-icon">📍</span>
-            <div><strong>Kitchen address</strong><span><%= settings.address %></span></div>
+            <div><strong>Kitchen address</strong><a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(settings.map_query) %>"><%= settings.address %></a></div>
           </div>
           <div class="info-row">
             <span class="info-icon">🕒</span>
             <div><strong>Opening hours</strong><span><%= settings.opening_hours %></span></div>
           </div>
         </div>
-        <iframe class="map-frame" title="Kitchen location" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=<%= encodeURIComponent(settings.map_query) %>&output=embed"></iframe>
       </div>
 
       <div class="form-card">
@@ -45,7 +44,7 @@
             <label class="full">Subject<input name="subject" placeholder="What is this about?"></label>
             <label class="full">Message<textarea name="message" rows="5" required placeholder="Tell us what's on your mind…"></textarea></label>
           </div>
-          <button class="btn btn-primary" type="submit">Send message →</button>
+          <div style="text-align:center"><button class="btn btn-primary" type="submit">Submit</button></div>
           <p class="form-hint">We usually reply within a few hours during kitchen hours.</p>
         </form>
       </div>

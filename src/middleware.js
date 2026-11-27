@@ -70,10 +70,12 @@ function installAppLocals(app) {
     if (req.session) delete req.session.flash;
 
     res.locals.settings = { ...allSettings() };
+    res.locals.activeOffers = all('SELECT * FROM offers WHERE is_active = 1 ORDER BY sort_order, id');
     res.locals.user = req.session && req.session.user ? req.session.user : null;
     res.locals.flash = flashes;
     res.locals.currentYear = new Date().getFullYear();
     res.locals.money = (value) => `₹${Number(value || 0).toLocaleString('en-IN')}`;
+    res.locals.whatsappLink = (phone) => `https://wa.me/${String(phone || '').replace(/\D/g, '')}`;
     res.locals.statusMeta = statusMeta;
     res.locals.timeAgo = timeAgo;
     res.locals.formatDate = formatDate;
