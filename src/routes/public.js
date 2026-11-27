@@ -17,6 +17,14 @@ function menuQuery(where = '', params = []) {
 
 router.get('/', (_req, res) => {
   const categories = all('SELECT * FROM categories ORDER BY sort_order');
+  const featuredDishes = all(
+    `SELECT mi.*, c.name AS category_name, c.slug AS category_slug, c.emoji AS category_emoji
+     FROM menu_items mi
+     JOIN categories c ON c.id = mi.category_id
+     WHERE mi.is_available = 1 AND mi.is_popular = 1
+     ORDER BY c.sort_order, mi.sort_order, mi.id
+     LIMIT 6`
+  );
   const featuredReviews = all(
     'SELECT * FROM reviews WHERE is_approved = 1 ORDER BY created_at DESC LIMIT 12'
   );
@@ -26,6 +34,7 @@ router.get('/', (_req, res) => {
     active: 'home',
     bodyClass: 'home-page',
     categories,
+    featuredDishes,
     featuredReviews
   });
 });

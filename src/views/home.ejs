@@ -74,6 +74,44 @@
   </div>
 </section>
 
+<section class="section menu-showcase">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">From our menu</span>
+      <h2>Favourites, made fresh</h2>
+      <p>These are the dishes our customers come back for. Cooked to order, packed hot and delivered straight to your door.</p>
+    </div>
+
+    <% if (featuredDishes.length) { %>
+      <div class="dish-grid">
+        <% featuredDishes.forEach(function(item) { %>
+          <article class="dish-card">
+            <div class="dish-media">
+              <img src="<%= item.image_url %>" alt="<%= item.name %>" loading="lazy">
+              <div class="dish-badges">
+                <span class="tag <%= item.is_veg ? 'tag-veg' : 'tag-nonveg' %>"><%= item.is_veg ? '🟢 Veg' : '🔴 Non-veg' %></span>
+                <span class="tag tag-pop">★ Popular</span>
+              </div>
+            </div>
+            <div class="dish-body">
+              <span class="dish-cat"><%= item.category_emoji || '' %> <%= item.category_name %> · <%= item.prep_minutes %> min</span>
+              <h3><%= item.name %></h3>
+              <p><%= item.description %></p>
+              <div class="dish-foot">
+                <span class="dish-price"><%= money(item.price) %></span>
+                <button class="add-btn" type="button" data-add data-id="<%= item.id %>" data-name="<%= item.name %>" data-price="<%= item.price %>" data-image="<%= item.image_url %>">+ Add</button>
+              </div>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+      <div class="showcase-actions">
+        <a href="/menu" class="btn btn-primary">View full menu →</a>
+      </div>
+    <% } %>
+  </div>
+</section>
+
 <section class="section">
   <div class="container">
     <div class="section-head center">

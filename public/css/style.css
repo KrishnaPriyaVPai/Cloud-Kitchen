@@ -664,3 +664,37 @@ tbody tr:hover { background: #fafcff; }
   .stat-grid { grid-template-columns: 1fr; }
   .dish-grid, .category-grid { gap: 12px; }
 }
+
+/* ---------- Home menu showcase ---------- */
+.menu-showcase {
+  background: linear-gradient(180deg, #fff 0%, var(--green-50) 100%);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.menu-showcase .dish-card { border-color: #d7e6f8; }
+.menu-showcase .dish-media { height: 210px; }
+.showcase-actions { text-align: center; margin-top: 28px; }
+
+/* ---------- Contact info column ---------- */
+.contact-info { display: flex; flex-direction: column; gap: 1rem; }
+.info-row div { min-width: 0; }
+.info-row a { overflow-wrap: anywhere; }
+.chef-contact-card {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #d7e6f8;
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 1.4rem;
+  box-shadow: var(--shadow-sm);
+}
+.chef-contact-card .eyebrow { margin-bottom: .2rem; }
+.chef-contact-card h3 { font-size: 1.1rem; margin: .2rem 0 .6rem; }
+.chef-contact-card p { font-size: .86rem; color: var(--muted); margin-bottom: .6rem; }
+.chef-contact-card .chef-sign { display: block; font-size: .9rem; color: var(--accent); margin-top: 0; }
+
+@media (max-width: 600px) {
+  .menu-showcase .dish-media { height: 170px; }
+  .showcase-actions { margin-top: 20px; }
+  .chef-contact-card { padding: 1rem; }
+}
