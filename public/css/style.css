@@ -558,3 +558,109 @@ tbody tr:hover { background: #fafcff; }
   .rating-big { font-size: 3rem; }
   .dash-head { align-items: flex-start; }
 }
+
+/* ---------- Mobile polish ---------- */
+@media (max-width: 600px) {
+  html { -webkit-text-size-adjust: 100%; }
+  body { line-height: 1.55; }
+  .container { width: min(calc(100% - 24px), var(--container)); }
+
+  .section { padding: 48px 0; }
+  .page-hero { padding: 44px 0 38px; }
+  .page-hero h1 { font-size: 1.9rem; }
+
+  .nav-wrap { min-height: 70px; gap: .5rem; }
+  .brand-logo, body.home-page .brand-logo { width: 40px; height: 40px; max-width: 40px; }
+  .brand-text strong, body.home-page .brand-text strong { font-size: 1.05rem; }
+  .nav-toggle { width: 44px; height: 44px; align-items: center; justify-content: center; }
+  .cart-btn { width: 44px; height: 44px; }
+  .main-nav a { padding: .8rem .6rem; font-size: .95rem; }
+  .staffbar-inner { gap: .5rem .8rem; padding-block: .5rem; }
+  .staffbar-title { font-size: .75rem; white-space: normal; }
+  .staffbar-nav a { padding: .45rem .55rem; font-size: .76rem; }
+  .staffbar-logout button { padding: .45rem .2rem; }
+
+  .hero-inner { padding: 40px 0 44px; gap: 1.6rem; }
+  .hero::after { display: none; }
+  .hero h1 { font-size: 2rem; }
+  .hero-card { padding: .75rem; }
+  .hero-card img { height: 180px; }
+  .hero-card-body { padding: .8rem .2rem .1rem; }
+  .hero-float { left: 8px; bottom: 12px; padding: .5rem .7rem; font-size: .74rem; }
+  .hero-proof { gap: .8rem; margin-top: 1.2rem; }
+  .hero-proof strong { font-size: 1.15rem; }
+  .hero-proof span { font-size: .68rem; }
+
+  .btn { min-height: 44px; padding: .75rem 1rem; }
+  .btn-sm { min-height: 38px; padding: .55rem .8rem; }
+  .action-btn, .chip, .offer-arrow, .carousel-arrow { min-height: 38px; }
+  .switch-label { min-height: 38px; }
+
+  .offer-space-wrap { padding: 8px 0; }
+  .offer-nav { margin-bottom: 6px; }
+  .offer-arrow { width: 34px; height: 34px; font-size: 1.1rem; }
+  .offer-card { min-height: 0; height: auto; padding: .85rem .9rem; }
+  .offer-content { max-width: 100%; }
+  .offer-tag { font-size: .56rem; padding: .16rem .5rem; }
+  .offer-content h2 { font-size: 1rem; margin: .25rem 0 .15rem; }
+  .offer-content p { font-size: .78rem; line-height: 1.45; margin-bottom: .3rem; }
+  .offer-link { font-size: .82rem; }
+
+  .trust-grid { gap: .6rem; padding: 18px 0; }
+  .trust-item { gap: .5rem; }
+  .trust-icon { width: 36px; height: 36px; font-size: 1rem; }
+  .trust-item strong { font-size: .8rem; }
+  .trust-item span { font-size: .68rem; }
+
+  .dish-media { height: 170px; }
+  .dish-body { padding: 1rem; }
+  .dish-body h3 { font-size: 1.1rem; }
+  .add-btn { min-height: 40px; }
+  .filter-bar { padding: .8rem; }
+  .filter-bar input[type=search] { min-width: 0; }
+  .story-img img { height: 240px; }
+  .story-note { position: static; max-width: 100%; margin-top: .8rem; }
+  .chef-card { padding: 1.2rem; gap: 1.2rem; }
+  .chef-card img { height: 200px; }
+  .value-card { padding: 1.1rem; }
+  .cta-band { padding: 1.3rem; gap: 1rem; }
+  .cta-band h2 { font-size: 1.5rem; }
+
+  input, textarea, select { font-size: 16px; }
+  .form-card, .auth-card, .track-card, .modal-card, .panel-body { padding: 1rem; }
+  .form-grid { gap: .8rem; }
+  .info-row { padding: .8rem; }
+  .search-inline { width: 100%; }
+  .search-inline input { min-width: 0; flex: 1; }
+  .badge { font-size: .68rem; }
+  .thumb-lg { width: 56px; height: 56px; }
+  .summary-line { font-size: .82rem; }
+  .table-wrap { -webkit-overflow-scrolling: touch; }
+
+  .cart-head, .cart-body, .cart-bottom { padding-left: 1rem; padding-right: 1rem; }
+  .cart-bottom { max-height: 58vh; }
+  .modal-actions .btn { flex: 1 1 140px; }
+
+  .rating-big { font-size: 2.8rem; }
+  .rating-bars { min-width: 0; }
+  .reviews-carousel { grid-template-columns: 30px minmax(0, 1fr) 30px; gap: 4px; }
+  .carousel-arrow { width: 30px; height: 30px; font-size: 1.1rem; }
+  .quote-card { padding: 1rem; }
+  .quote-card blockquote { font-size: .86rem; }
+
+  .footer-grid { padding: 36px 0 30px; }
+  .floating-contact { right: 12px; bottom: 12px; }
+  .floating-btn { width: 44px; height: 44px; }
+  .floating-btn svg { width: 22px; height: 22px; }
+  .floating-mail svg { width: 24px; height: 24px; }
+}
+
+@media (max-width: 380px) {
+  .container { width: calc(100% - 20px); }
+  .hero h1 { font-size: 1.8rem; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; }
+  .hero-proof { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+  .stat-grid { grid-template-columns: 1fr; }
+  .dish-grid, .category-grid { gap: 12px; }
+}

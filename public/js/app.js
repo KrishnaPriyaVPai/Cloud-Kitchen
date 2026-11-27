@@ -191,6 +191,14 @@
       nav.classList.toggle('open');
       navToggle.setAttribute('aria-expanded', nav.classList.contains('open') ? 'true' : 'false');
     }
+
+    const navLink = event.target.closest('#main-nav a');
+    if (navLink && window.matchMedia('(max-width: 820px)').matches) {
+      const nav = $('#main-nav');
+      nav.classList.remove('open');
+      const toggle = $('#nav-toggle');
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    }
   });
 
   document.addEventListener('keydown', (event) => {
